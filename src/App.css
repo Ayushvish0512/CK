@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #111;
+  color: #fff;
+}
+
+.services, .contact {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.services ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.footer {
+  padding: 20px;
+  background: #111;
+  color: #fff;
+  text-align: center;
+}
