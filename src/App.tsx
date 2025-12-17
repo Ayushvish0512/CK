@@ -19,7 +19,7 @@ function App() {
 
       <section className="contact">
         <h2>Contact</h2>
-        <p>Email: your@email.com</p>
+        <p>Email: ayush</p>
         <p>WhatsApp: +91XXXXXXXXXX</p>
       </section>
 
