@@ -1,36 +1,28 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { DatePicker } from '@/components/DatePicker';
-import { TimePicker } from '@/components/TimePicker';
+import { DateTimePicker } from '@/components/DateTimePicker';
 import { toast } from '@/hooks/use-toast';
 
 const Index: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const handleDateChange = (date: Date) => {
+  const handleApply = (date: Date, hours: number, minutes: number, period: 'AM' | 'PM') => {
     setSelectedDate(date);
-    toast({
-      title: "Date Selected",
-      description: `You picked ${format(date, 'EEEE, MMMM d, yyyy')}`,
-    });
-  };
-
-  const handleTimeApply = (hours: number, minutes: number, period: 'AM' | 'PM') => {
     const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
     const timeString = `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
     setSelectedTime(timeString);
     
     toast({
-      title: "Time Selected",
-      description: `You picked ${timeString}`,
+      title: "Date & Time Selected",
+      description: `You picked ${format(date, 'EEEE, MMMM d, yyyy')} at ${timeString}`,
     });
   };
 
-  const handleTimeCancel = () => {
+  const handleCancel = () => {
     toast({
       title: "Cancelled",
-      description: "Time selection was cancelled",
+      description: "Selection was cancelled",
       variant: "destructive",
     });
   };
@@ -43,23 +35,18 @@ const Index: React.FC = () => {
           Pick your date & time
         </h1>
         <p className="text-muted-foreground">
-          Select a date and time using the pickers below
+          Select a date and time using the picker below
         </p>
       </div>
 
-      {/* Date Picker */}
-      <DatePicker
+      {/* Combined Date & Time Picker */}
+      <DateTimePicker
         initialDate={selectedDate}
-        onDateChange={handleDateChange}
-      />
-
-      {/* Time Picker */}
-      <TimePicker
         initialHours={7}
         initialMinutes={0}
         initialPeriod="AM"
-        onApply={handleTimeApply}
-        onCancel={handleTimeCancel}
+        onApply={handleApply}
+        onCancel={handleCancel}
       />
 
       {/* Selected values display */}
