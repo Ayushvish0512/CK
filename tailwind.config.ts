@@ -58,6 +58,19 @@ export default {
           hand: "hsl(var(--clock-hand))",
           center: "hsl(var(--clock-center))",
         },
+        date: {
+          active: "hsl(var(--date-active))",
+          "active-glow": "hsl(var(--date-active-glow))",
+        },
+        glass: {
+          bg: "hsl(var(--glass-bg))",
+          border: "hsl(var(--glass-border))",
+        },
+        gradient: {
+          start: "hsl(var(--gradient-start))",
+          mid: "hsl(var(--gradient-mid))",
+          end: "hsl(var(--gradient-end))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -74,6 +87,7 @@ export default {
         'soft-md': 'var(--shadow-md)',
         'soft-lg': 'var(--shadow-lg)',
         'soft-xl': 'var(--shadow-xl)',
+        'glass': 'var(--shadow-glass)',
       },
       borderRadius: {
         lg: "var(--radius)",
