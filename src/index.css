@@ -44,11 +44,22 @@
     --clock-hand: 217 91% 60%;
     --clock-center: 217 91% 60%;
 
+    /* Glass UI tokens */
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 100% / 0.5;
+    --glass-blur: 20px;
+    --gradient-start: 320 70% 65%;
+    --gradient-mid: 280 60% 70%;
+    --gradient-end: 260 50% 75%;
+    --date-active: 340 80% 55%;
+    --date-active-glow: 340 80% 60%;
+
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(220 15% 20% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(220 15% 20% / 0.08), 0 2px 4px -2px hsl(220 15% 20% / 0.06);
     --shadow-lg: 0 10px 15px -3px hsl(220 15% 20% / 0.08), 0 4px 6px -4px hsl(220 15% 20% / 0.05);
     --shadow-xl: 0 20px 25px -5px hsl(220 15% 20% / 0.1), 0 8px 10px -6px hsl(220 15% 20% / 0.08);
+    --shadow-glass: 0 8px 32px 0 hsl(220 15% 20% / 0.15);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -93,6 +104,13 @@
     --clock-dial-bg: 217 32% 20%;
     --clock-number: 215 20% 70%;
 
+    /* Glass UI tokens for dark mode */
+    --glass-bg: 220 30% 15% / 0.7;
+    --glass-border: 220 30% 25% / 0.5;
+    --gradient-start: 320 70% 45%;
+    --gradient-mid: 280 60% 50%;
+    --gradient-end: 260 50% 55%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -122,5 +140,29 @@
   
   .clock-hand-transition {
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid hsl(var(--glass-border));
+  }
+
+  .gradient-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-start)) 0%,
+      hsl(var(--gradient-mid)) 50%,
+      hsl(var(--gradient-end)) 100%
+    );
+  }
+
+  .date-gradient-active {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--date-active)) 0%,
+      hsl(var(--date-active-glow)) 100%
+    );
   }
 }
