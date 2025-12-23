@@ -11,7 +11,6 @@ const QuickSelect: React.FC<QuickSelectProps> = ({ selected, onSelect }) => {
     { key: 'today', label: 'Today' },
     { key: 'tomorrow', label: 'Tomorrow' },
     { key: 'nextWeek', label: 'Next Week' },
-    { key: 'month', label: 'Month' },
   ];
 
   return (
