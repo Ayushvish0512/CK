@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { format, addDays, addWeeks, startOfWeek, isSameDay } from 'date-fns';
-import { Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ClockDial from '../TimePicker/ClockDial';
 import TimeDisplay from '../TimePicker/TimeDisplay';
 import AmPmToggle from '../TimePicker/AmPmToggle';
@@ -152,7 +152,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         onTouchEnd={handleTouchEnd}
       >
         {/* Step indicator tabs */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+        <div className="flex items-center justify-center px-6 pt-6 pb-2">
           <div className="flex bg-secondary/50 rounded-full p-1">
             <button
               onClick={() => setStep('date')}
@@ -181,9 +181,6 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
               Time
             </button>
           </div>
-          <button className="p-2 rounded-full glass-card hover:bg-secondary/50 clock-transition">
-            <Settings className="w-5 h-5 text-muted-foreground" />
-          </button>
         </div>
 
         {/* Step indicator line */}
@@ -226,11 +223,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
               <div className="flex items-center justify-center px-6 pb-4">
                 <div className="flex bg-secondary/30 rounded-full p-1">
                   <button
-                    onClick={() => setViewMode('weekly')}
+                    onClick={() => {
+                      setViewMode('weekly');
+                      setShowMonthCalendar(false);
+                    }}
                     className={`
                       px-3 py-1.5 rounded-full text-xs font-medium
                       clock-transition
-                      ${viewMode === 'weekly'
+                      ${viewMode === 'weekly' && !showMonthCalendar
                         ? 'bg-card text-foreground shadow-soft-sm'
                         : 'text-muted-foreground hover:text-foreground'
                       }
@@ -239,11 +239,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     Weekly
                   </button>
                   <button
-                    onClick={() => setViewMode('monthly')}
+                    onClick={() => {
+                      setViewMode('monthly');
+                      setShowMonthCalendar(true);
+                    }}
                     className={`
                       px-3 py-1.5 rounded-full text-xs font-medium
                       clock-transition
-                      ${viewMode === 'monthly'
+                      ${viewMode === 'monthly' || showMonthCalendar
                         ? 'bg-card text-foreground shadow-soft-sm'
                         : 'text-muted-foreground hover:text-foreground'
                       }
@@ -260,7 +263,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                   <MonthCalendar
                     selectedDate={selectedDate}
                     onSelectDate={handleDateSelect}
-                    onClose={() => setShowMonthCalendar(false)}
+                    onClose={() => {
+                      setShowMonthCalendar(false);
+                      setViewMode('weekly');
+                    }}
                   />
                 ) : (
                   <WeekStrip
@@ -345,37 +351,33 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                   period={period}
                   onChange={setPeriod}
                 />
-              </div>
 
-              {/* Action buttons */}
-              <div className="flex gap-3 p-6 bg-card">
-                <button
-                  onClick={onCancel}
-                  className="
-                    flex-1 py-3 px-6
-                    text-sm font-semibold text-foreground
-                    bg-secondary rounded-xl
-                    hover:bg-secondary/80
-                    clock-transition
-                    focus:outline-none focus:ring-2 focus:ring-ring/20
-                  "
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleApply}
-                  className="
-                    flex-1 py-3 px-6
-                    text-sm font-semibold text-primary-foreground
-                    bg-primary rounded-xl
-                    hover:bg-primary/90
-                    shadow-soft-md
-                    clock-transition
-                    focus:outline-none focus:ring-2 focus:ring-primary/20
-                  "
-                >
-                  Apply
-                </button>
+                {/* Action buttons */}
+                <div className="flex items-center justify-between px-2 mt-6">
+                  <button
+                    onClick={onCancel}
+                    className="
+                      px-5 py-2.5 text-sm font-semibold rounded-xl
+                      clock-transition
+                      bg-secondary text-secondary-foreground
+                      hover:bg-secondary/80
+                      border border-border
+                    "
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleApply}
+                    className="
+                      px-5 py-2.5 text-sm font-semibold rounded-xl
+                      clock-transition
+                      bg-secondary text-secondary-foreground
+                      hover:bg-secondary/80
+                    "
+                  >
+                    Apply
+                  </button>
+                </div>
               </div>
             </div>
           </div>
