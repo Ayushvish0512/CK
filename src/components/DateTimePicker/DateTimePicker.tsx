@@ -308,35 +308,25 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
             {/* Time Section */}
             <div className="w-1/2 flex-shrink-0">
-              {/* Time Header with date back */}
+              {/* Time display - same position as date display */}
               <div className="px-6 py-4">
                 <div className="flex items-baseline justify-between">
                   <button 
                     onClick={() => setStep('date')}
-                    className="flex flex-col items-start group cursor-pointer"
+                    className="flex items-center gap-2 group cursor-pointer"
                   >
-                    <span className="text-sm text-muted-foreground flex items-center gap-1">
-                      <ChevronLeft className="w-3 h-3" />
-                      {format(selectedDate, 'yyyy')}
-                    </span>
-                    <h2 className="text-3xl font-bold text-foreground group-hover:text-primary clock-transition">
-                      {format(selectedDate, 'MMM d')}
-                    </h2>
+                    <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-primary clock-transition" />
+                    <TimeDisplay
+                      hours={hours}
+                      minutes={minutes}
+                      mode={mode}
+                      onModeChange={setMode}
+                    />
                   </button>
-                  <span className="text-lg font-medium text-muted-foreground">
-                    Set Time
+                  <span className="text-4xl font-bold text-muted-foreground/50">
+                    {period}
                   </span>
                 </div>
-              </div>
-
-              {/* Time display */}
-              <div className="px-6">
-                <TimeDisplay
-                  hours={hours}
-                  minutes={minutes}
-                  mode={mode}
-                  onModeChange={setMode}
-                />
               </div>
 
               {/* Clock dial section */}
