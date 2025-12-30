@@ -1,4 +1,7 @@
 import "./App.css";
+import { DatePicker } from "./components/DatePicker";
+import { TimePicker } from "./components/TimePicker";
+import { DateTimePicker } from "./components/DateTimePicker";
 
 function App() {
   return (
@@ -15,6 +18,24 @@ function App() {
           <li>WhatsApp & Email Automation</li>
           <li>CRM & Funnel Setup</li>
         </ul>
+      </section>
+
+      <section className="time-viewer">
+        <h2>Time Viewer</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '20px' }}>
+          <div>
+            <label>Date Picker:</label>
+            <DatePicker />
+          </div>
+          <div>
+            <label>Time Picker:</label>
+            <TimePicker />
+          </div>
+          <div>
+            <label>Date Time Picker:</label>
+            <DateTimePicker />
+          </div>
+        </div>
       </section>
 
       <section className="contact">
