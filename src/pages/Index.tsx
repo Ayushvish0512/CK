@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { DateTimePicker } from '@/components/DateTimePicker';
-import { toast } from '@/hooks/use-toast';
+import DateTimePicker from '../components/DateTimePicker/DateTimePicker';
+import { toast } from '../hooks/use-toast';
 
 const Index: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -12,7 +12,7 @@ const Index: React.FC = () => {
     const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
     const timeString = `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
     setSelectedTime(timeString);
-    
+
     toast({
       title: "Date & Time Selected",
       description: `You picked ${format(date, 'EEEE, MMMM d, yyyy')} at ${timeString}`,

@@ -1,8 +1,7 @@
-import React from "react";
-import { DatePicker } from "../components/DatePicker";
-import { TimePicker } from "../components/TimePicker";
-import { DateTimePicker } from "../components/DateTimePicker";
-import "./App.css";
+import DatePicker from "../components/DatePicker/DatePicker";
+import TimePicker from "../components/TimePicker/TimePicker";
+import DateTimePicker from "../components/DateTimePicker/DateTimePicker";
+import "../App.css";
 
 const Home: React.FC = () => {
   return (
