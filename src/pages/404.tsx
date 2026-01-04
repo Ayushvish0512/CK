@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, easeInOut } from "framer-motion";
 import { Ghost, Search, House, ArrowLeft } from "lucide-react";
 
 export default function App() {
@@ -9,7 +9,7 @@ export default function App() {
       transition: {
         duration: 3,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: easeInOut,
       },
     },
   };
@@ -21,7 +21,6 @@ export default function App() {
       transition: {
         duration: 20,
         repeat: Infinity,
-        ease: "linear",
       },
     },
   };
@@ -33,7 +32,7 @@ export default function App() {
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: easeInOut,
       },
     },
   };
@@ -67,7 +66,6 @@ export default function App() {
           transition={{
             duration: Math.random() * 10 + 10,
             repeat: Infinity,
-            ease: "linear",
           }}
         />
       ))}
@@ -208,7 +206,7 @@ export default function App() {
               transition={{
                 duration: 1.5,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: easeInOut,
               }}
             >
               <Search className="w-5 h-5" />
@@ -228,7 +226,7 @@ export default function App() {
         transition={{
           duration: 8,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: easeInOut,
         }}
       />
       <motion.div
@@ -240,7 +238,7 @@ export default function App() {
         transition={{
           duration: 6,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: easeInOut,
         }}
       />
       <motion.div
@@ -252,7 +250,6 @@ export default function App() {
         transition={{
           duration: 10,
           repeat: Infinity,
-          ease: "linear",
         }}
       />
       
