@@ -40,7 +40,7 @@ const Home: React.FC = () => {
 
       <section className="contact">
         <h2>Contact</h2>
-        <p>Email: ayush</p>
+        <p>Email: ayushvishwakarma0512@gmail.com</p>
         <p>WhatsApp: +91XXXXXXXXXX</p>
       </section>
 
