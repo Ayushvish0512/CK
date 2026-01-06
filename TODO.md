@@ -1,5 +1,5 @@
-# TODO for Home Page Update
-
-- [x] Remove unused imports (DatePicker, TimePicker, DateTimePicker) from src/pages/Home.tsx
-- [x] Remove the entire "time-viewer" section from src/pages/Home.tsx
-- [x] Add glass effect styles to src/App.css for header, services, contact, and footer sections
+- [x] Add text-shadow utility to index.css for header title
+- [x] Refactor Home.tsx to use Tailwind classes instead of App.css
+- [x] Remove App.css import from Home.tsx
+- [x] Delete App.css file
+- [x] Test the styling consistency
