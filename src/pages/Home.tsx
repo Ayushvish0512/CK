@@ -18,7 +18,7 @@ const Home: React.FC = () => {
       <section className="glass-home p-8 mb-8">
         <h2 className="text-3xl mb-6 text-white">Contact</h2>
         <p className="my-2 text-lg">Email: ayushvishwakarma0512@gmail.com</p>
-        <p className="my-2 text-lg">WhatsApp: +91XXXXXXXXXX</p>
+        <p className="my-2 text-lg">WhatsApp: +917XXXXXXXXX</p>
       </section>
 
       <footer className="mt-auto p-4 opacity-80 text-sm">
