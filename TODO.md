@@ -1,11 +1,10 @@
-# Integration Plan for Time Viewer
+# TODO List for Fixing Black Site Issue
 
-- [ ] Update package.json with dependencies from time-weaver
-- [ ] Copy config files (tailwind.config.ts, postcss.config.js, components.json)
-- [ ] Copy src/components directory from time-weaver
-- [ ] Copy src/hooks directory from time-weaver
-- [ ] Copy src/lib directory from time-weaver
-- [ ] Copy src/pages directory from time-weaver
-- [ ] Update src/App.tsx to include time viewer components
-- [ ] Install new dependencies
-- [ ] Test the integration
+## Completed Tasks
+- [x] Add @import "tailwindcss"; to the top of src/index.css to enable Tailwind CSS
+- [x] Change basename in App.tsx from "/CK/" to "/" to fix routing
+
+## Next Steps
+- [ ] Test the site at http://localhost:5173/ to ensure it loads properly
+- [ ] Verify that CSS components (Tailwind classes) are now working and styled correctly
+- [ ] Check that all routes (/, /index, /404) are accessible without the /ck/ prefix
