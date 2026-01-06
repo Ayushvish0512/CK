@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const Home: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-blue-400 to-purple-600 text-white">
@@ -23,55 +22,6 @@ const Home: React.FC = () => {
       </section>
 
       <footer className="mt-auto p-4 opacity-80 text-sm">
-=======
-import DatePicker from "../components/DatePicker/DatePicker";
-import TimePicker from "../components/TimePicker/TimePicker";
-import DateTimePicker from "../components/DateTimePicker/DateTimePicker";
-import "../App.css";
-
-const Home: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="header">
-        <h1>CK Marketing & Automation</h1>
-        <p>We help businesses generate leads & automate follow-ups</p>
-      </header>
-
-      <section className="services">
-        <h2>Our Services</h2>
-        <ul>
-          <li>Lead Generation (Meta & Google Ads)</li>
-          <li>WhatsApp & Email Automation</li>
-          <li>CRM & Funnel Setup</li>
-        </ul>
-      </section>
-
-      <section className="time-viewer">
-        <h2>Time Viewer</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '20px' }}>
-          <div>
-            <label>Date Picker:</label>
-            <DatePicker />
-          </div>
-          <div>
-            <label>Time Picker:</label>
-            <TimePicker />
-          </div>
-          <div>
-            <label>Date Time Picker:</label>
-            <DateTimePicker />
-          </div>
-        </div>
-      </section>
-
-      <section className="contact">
-        <h2>Contact</h2>
-        <p>Email: ayushvishwakarma0512@gmail.com</p>
-        <p>WhatsApp: +91XXXXXXXXXX</p>
-      </section>
-
-      <footer className="footer">
->>>>>>> d0084ce86efeeabad5875a2e4a936ef85130604b
         <p>© 2025 CK Marketing</p>
       </footer>
     </div>
