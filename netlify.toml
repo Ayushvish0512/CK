@@ -9,3 +9,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[site]
+  id = "2371291d-d735-4a0d-a21d-d27affd00377"
