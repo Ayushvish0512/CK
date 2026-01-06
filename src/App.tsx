@@ -5,7 +5,7 @@ import NotFound from "./pages/NotFound";
 import Page404 from "./pages/404";
 
 const App = () => (
-  <BrowserRouter>
+  <BrowserRouter basename="/CK/">
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/index" element={<Index />} />
