@@ -1,4 +1,13 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+=======
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+>>>>>>> d0084ce86efeeabad5875a2e4a936ef85130604b
 
 @tailwind base;
 @tailwind components;
@@ -176,5 +185,72 @@
     -webkit-backdrop-filter: blur(10px);
     border-radius: 1rem;
     box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+}
+
+/* Custom CSS variables for glass effect */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+@theme {
+  --color-primary: hsl(221.2 83.2% 53.3%);
+  --color-primary-foreground: hsl(210 40% 98%);
+  --color-secondary: hsl(210 40% 96%);
+  --color-secondary-foreground: hsl(222.2 84% 4.9%);
+  --color-muted: hsl(210 40% 96%);
+  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(222.2 84% 4.9%);
+  --color-border: hsl(214.3 31.8% 91%);
+  --color-clock-dial: hsl(210 40% 96%);
+  --color-clock-hand: hsl(221.2 83.2% 53.3%);
+  --color-clock-center: hsl(221.2 83.2% 53.3%);
+  --shadow-soft-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-soft-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+}
+
+.shadow-glass {
+  box-shadow: var(--shadow-glass);
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+.clock-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+.clock-hand-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+.date-gradient-active {
+  background: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-primary)) 50%, hsl(var(--color-secondary)));
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, hsl(221.2 83.2% 53.3%), hsl(210 40% 96%));
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
