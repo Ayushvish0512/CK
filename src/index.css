@@ -69,6 +69,18 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Resume/Portfolio theme tokens */
+    --resume-bg: 252 20% 21%;
+    --resume-card: 270 15% 60%;
+    --resume-card-foreground: 0 0% 100%;
+    --resume-accent: 280 40% 65%;
+    --resume-muted: 252 15% 35%;
+    --resume-heading: 0 0% 100%;
+    --resume-text: 252 10% 85%;
+    --resume-highlight: 340 70% 55%;
+    --resume-skill-bg: 252 25% 30%;
+
   }
 
   .dark {
