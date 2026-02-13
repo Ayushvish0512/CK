@@ -32,17 +32,43 @@ export default function Chat() {
   };
 
   return (
-    <div>
+  <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+    <h2>Wellness Chat</h2>
+
+    <div style={{ 
+      minHeight: "300px",
+      border: "1px solid #ccc",
+      padding: "10px",
+      marginBottom: "10px"
+    }}>
       {messages.map((m, i) => (
-        <p key={i}><b>{m.role}:</b> {m.text}</p>
+        <p key={i}>
+          <b>{m.role}:</b> {m.text}
+        </p>
       ))}
-
-      <input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-
-      <button onClick={sendMessage}>Send</button>
     </div>
+
+    <input
+      style={{
+        width: "100%",
+        padding: "10px",
+        border: "1px solid #ccc",
+        marginBottom: "10px"
+      }}
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      placeholder="Type your message..."
+    />
+
+    <button
+      style={{
+        padding: "10px 20px",
+        cursor: "pointer"
+      }}
+      onClick={sendMessage}
+    >
+      Send
+    </button>
+  </div>
   );
 }
