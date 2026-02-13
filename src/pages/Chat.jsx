@@ -6,7 +6,7 @@ export default function Chat() {
 
   const sendMessage = async () => {
     const res = await fetch(
-      "https://workplace-sells-brick-gradually.trycloudflare.com ",
+      "https://workplace-sells-brick-gradually.trycloudflare.com/chat",
       {
         method: "POST",
         headers: {
