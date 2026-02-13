@@ -1,15 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function Chat() {
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
-<<<<<<< HEAD
   // ✅ 1️⃣ Loading state
-=======
-  // ✅ ADD THIS LINE (loading state)
->>>>>>> f2b35b72e608200714a74ab90c8fa6a583002a4a
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
@@ -22,11 +18,7 @@ export default function Chat() {
       { role: "user", text: message }
     ]);
 
-<<<<<<< HEAD
     setLoading(true); // ✅ 2️⃣ START loading
-=======
-    setLoading(true);   // ✅ START loading
->>>>>>> f2b35b72e608200714a74ab90c8fa6a583002a4a
 
     const res = await fetch(
       "https://workplace-sells-brick-gradually.trycloudflare.com/chat",
@@ -51,7 +43,6 @@ export default function Chat() {
     ]);
 
     setMessage("");
-<<<<<<< HEAD
     setLoading(false); // ✅ 3️⃣ STOP loading
   };
 
@@ -61,58 +52,6 @@ export default function Chat() {
 
       <div style={{ 
         minHeight: "300px",
-=======
-    setLoading(false);   // ✅ STOP loading
-  };
-
-  return (
-<<<<<<< HEAD
-    <div>
-
-      {messages.map((m, i) => (
-        <p key={i}>
-          <b>{m.role === "user" ? "You" : "AI"}:</b> {m.text}
-        </p>
-      ))}
-
-      {/* ✅ SHOW WHILE AI IS RESPONDING */}
-      {loading && (
-        <p><b>AI:</b> Typing...</p>
-      )}
-
-      <input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-
-      {/* ✅ Disable button while loading */}
-      <button onClick={sendMessage} disabled={loading}>
-        {loading ? "Thinking..." : "Send"}
-      </button>
-
-=======
-  <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-    <h2>Wellness Chat</h2>
-
-    <div style={{ 
-      minHeight: "300px",
-      border: "1px solid #ccc",
-      padding: "10px",
-      marginBottom: "10px"
-    }}>
-      {messages.map((m, i) => (
-        <p key={i}>
-          <b>{m.role}:</b> {m.text}
-        </p>
-      ))}
->>>>>>> d99e4950907ab1a2721b80dbf3c0df66b939612d
-    </div>
-
-    <input
-      style={{
-        width: "100%",
-        padding: "10px",
->>>>>>> f2b35b72e608200714a74ab90c8fa6a583002a4a
         border: "1px solid #ccc",
         padding: "10px",
         marginBottom: "10px"
