@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import NotFound from "./pages/404";
 import Index from "./pages/Index";
 import Profile from "./pages/profile";
+import Chat from "./pages/Chat";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/picktime" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
+           <Route path="/chat" element={<Chat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
