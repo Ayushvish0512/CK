@@ -1,10 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Chat() {
+
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
+  // ✅ ADD THIS LINE (loading state)
+  const [loading, setLoading] = useState(false);
+
   const sendMessage = async () => {
+
+    if (!message.trim()) return;
+
+    // show user message immediately
+    setMessages([
+      ...messages,
+      { role: "user", text: message }
+    ]);
+
+    setLoading(true);   // ✅ START loading
+
     const res = await fetch(
       "https://workplace-sells-brick-gradually.trycloudflare.com/chat",
       {
@@ -22,27 +37,39 @@ export default function Chat() {
 
     const data = await res.json();
 
-    setMessages([
-      ...messages,
-      { role: "user", text: message },
+    setMessages(prev => [
+      ...prev,
       { role: "ai", text: data.response }
     ]);
 
     setMessage("");
+    setLoading(false);   // ✅ STOP loading
   };
 
   return (
     <div>
+
       {messages.map((m, i) => (
-        <p key={i}><b>{m.role}:</b> {m.text}</p>
+        <p key={i}>
+          <b>{m.role === "user" ? "You" : "AI"}:</b> {m.text}
+        </p>
       ))}
+
+      {/* ✅ SHOW WHILE AI IS RESPONDING */}
+      {loading && (
+        <p><b>AI:</b> Typing...</p>
+      )}
 
       <input
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
 
-      <button onClick={sendMessage}>Send</button>
+      {/* ✅ Disable button while loading */}
+      <button onClick={sendMessage} disabled={loading}>
+        {loading ? "Thinking..." : "Send"}
+      </button>
+
     </div>
   );
 }
