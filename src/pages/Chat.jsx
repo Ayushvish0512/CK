@@ -1,12 +1,32 @@
 import { useState } from "react";
 
+/* ✅ CREATE UNIQUE USER ID (runs once per device) */
+function getUserId() {
+  let userId = localStorage.getItem("wellness_user_id");
+
+  if (!userId) {
+    userId =
+      "user_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(36).substring(2, 8);
+
+    localStorage.setItem("wellness_user_id", userId);
+  }
+
+  return userId;
+}
+
 export default function Chat() {
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
-  // ✅ 1️⃣ Loading state
+  // ✅ loading state
   const [loading, setLoading] = useState(false);
+
+  // ✅ unique user id for this device
+  const userId = getUserId();
 
   const sendMessage = async () => {
 
@@ -18,17 +38,17 @@ export default function Chat() {
       { role: "user", text: message }
     ]);
 
-    setLoading(true); // ✅ 2️⃣ START loading
+    setLoading(true);
 
     const res = await fetch(
-      "https://workplace-sells-brick-gradually.trycloudflare.com/chat",
+      "https://discounted-jump-dad-seconds.trycloudflare.com/chat",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          user_id: "demo_user",
+          user_id: userId,   // ✅ UPDATED HERE
           message: message,
           lifestyle_area: "energy"
         })
@@ -43,7 +63,7 @@ export default function Chat() {
     ]);
 
     setMessage("");
-    setLoading(false); // ✅ 3️⃣ STOP loading
+    setLoading(false);
   };
 
   return (
@@ -62,7 +82,7 @@ export default function Chat() {
           </p>
         ))}
 
-        {/* ✅ SHOW WHILE AI IS RESPONDING */}
+        {/* AI typing indicator */}
         {loading && (
           <p><b>AI:</b> Typing...</p>
         )}
