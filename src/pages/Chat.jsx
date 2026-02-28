@@ -41,7 +41,7 @@ export default function Chat() {
     setLoading(true);
 
     const res = await fetch(
-      "https://discounted-jump-dad-seconds.trycloudflare.com/chat",
+      "https://wellness-ai-i94p.onrender.com/chat",
       {
         method: "POST",
         headers: {
@@ -70,7 +70,7 @@ export default function Chat() {
     <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
       <h2>Wellness Chat</h2>
 
-      <div style={{ 
+      <div style={{
         minHeight: "300px",
         border: "1px solid #ccc",
         padding: "10px",
