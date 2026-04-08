@@ -78,43 +78,40 @@ To automate the process of starting your tunnel and updating the URL without man
 
 ```powershell
 # 1. Configuration
-$CONFIG_REPO_PATH = "C:\path\to\your\chatbot-config-repo"
+$WORKER_URL = "https://chatbot-url-service.your-name.workers.dev"
+$PASSWORD = "your-password-here"
 $OLLAMA_PORT = "11434"
 $LOG_FILE = "$env:TEMP\cloudflare_tunnel.log"
 
-# 2. Start Cloudflare Tunnel and log output
+# 2. Start Cloudflare Tunnel
 Write-Host "Starting Cloudflare Tunnel..." -ForegroundColor Cyan
 if (Test-Path $LOG_FILE) { Remove-Item $LOG_FILE }
-
-# Runs the tunnel in the background and saves logs to a file
 Start-Process "cloudflared" -ArgumentList "tunnel --url http://localhost:$OLLAMA_PORT" -RedirectStandardError $LOG_FILE -NoNewWindow
 
-# 3. Wait for the URL to be generated (usually takes 5-10 seconds)
-Write-Host "Waiting for URL generation..."
+# 3. Wait for URL generation
+Write-Host "Waiting for URL..."
 Start-Sleep -Seconds 10
 
-# 4. Extract the URL from the log file
+# 4. Extract URL
 $LOG_CONTENT = Get-Content $LOG_FILE
 $TUNNEL_URL = $LOG_CONTENT | Select-String -Pattern "https://[a-zA-Z0-9-]+\.trycloudflare\.com" | ForEach-Object { $_.Matches.Value } | Select-Object -First 1
 
 if ($null -eq $TUNNEL_URL) {
-    Write-Error "Failed to capture Cloudflare URL. Check $LOG_FILE"
+    Write-Error "Failed to capture URL. Check $LOG_FILE"
     exit
 }
 
-Write-Host "Captured URL: $TUNNEL_URL" -ForegroundColor Green
+Write-Host "Captured: $TUNNEL_URL" -ForegroundColor Green
 
-# 5. Update the url.json in your config repo
-$JSON_DATA = @{ apiUrl = $TUNNEL_URL } | ConvertTo-Json
-$JSON_DATA | Out-File -FilePath "$CONFIG_REPO_PATH\url.json" -Encoding utf8
+# 5. INSTANT UPDATE: Send to Cloudflare Worker
+$BODY = @{ 
+    password = $PASSWORD
+    newUrl = $TUNNEL_URL 
+} | ConvertTo-Json
 
-# 6. Push to GitHub
-Set-Location $CONFIG_REPO_PATH
-git add url.json
-git commit -m "Update Tunnel URL: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-git push origin main
+Invoke-RestMethod -Uri $WORKER_URL -Method Post -Body $BODY -ContentType "application/json"
 
-Write-Host "Successfully updated API URL!" -ForegroundColor Green
+Write-Host "Successfully updated Worker! App is now live at: $TUNNEL_URL" -ForegroundColor Green
 ```
 
 ### How to run this on System Wake/Start:

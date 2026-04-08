@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
 
 /* 
-  ✅ TRULY INSTANT UPDATES (No Redeployments):
-  To avoid a Netlify build every time your URL changes, host your 'url.json' 
-  OUTSIDE of this repository. 
-  
-  Options: 
-  1. A separate GitHub Repo (e.g., https://yourname.github.io/my-config/url.json)
-  2. A GitHub Gist (Get the 'Raw' URL to the JSON file)
+  ✅ INSTANT UPDATES (Cloudflare Worker):
+  This URL points to a Cloudflare Worker that stores your tunnel link.
+  No GitHub push or Netlify rebuild required!
 */
-const EXTERNAL_CONFIG_URL = "https://your-username.github.io/config-repo/url.json"; 
+const EXTERNAL_CONFIG_URL = "https://chatbot-url-service.your-name.workers.dev"; 
 const DEFAULT_API_URL = "https://wellness-ai-i94p.onrender.com/chat";
 
 /* ✅ CREATE UNIQUE USER ID (runs once per device) */
