@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
-const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com/'; // Adjust if your FastAPI is elsewhere
+const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com'; // Adjust if your FastAPI is elsewhere
 
 const SpeakBetter = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -85,6 +85,11 @@ const SpeakBetter = () => {
   };
 
   const startRecording = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast.error("Your browser does not support audio recording. Use a modern browser like Chrome or Safari over HTTPS.");
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -102,9 +107,16 @@ const SpeakBetter = () => {
 
       mediaRecorder.start();
       setIsRecording(true);
-      toast("Recording started...");
-    } catch (err) {
-      toast.error("Microphone access denied");
+      toast.success("Recording started... Speak now!");
+    } catch (err: any) {
+      console.error("Mic error:", err);
+      if (err.name === 'NotAllowedError') {
+        toast.error("Microphone permission denied. Please enable it in browser settings.");
+      } else if (err.name === 'NotFoundError') {
+        toast.error("No microphone found on this device.");
+      } else {
+        toast.error(`Recording error: ${err.message || 'Unknown error'}`);
+      }
     }
   };
 
