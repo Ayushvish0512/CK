@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import WakingUpLoader from '@/components/WakingUpLoader';
 
 const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
@@ -29,6 +30,8 @@ const SpeakBetter = () => {
   const [feedback, setFeedback] = useState<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const [isWakingUp, setIsWakingUp] = useState(false);
+  const [wakingUpMessage, setWakingUpMessage] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -37,6 +40,8 @@ const SpeakBetter = () => {
   }, [token]);
 
   const loadInitialData = async () => {
+    setWakingUpMessage("Fetching progress data");
+    setIsWakingUp(true);
     try {
       const [taskRes, statsRes] = await Promise.all([
         fetch(`${API_BASE_URL}/task/`, { headers: { 'Authorization': `Bearer ${token}` } }),
@@ -50,6 +55,8 @@ const SpeakBetter = () => {
       }
     } catch (err) {
       console.error("Failed to load data", err);
+    } finally {
+      setIsWakingUp(false);
     }
   };
 
@@ -57,6 +64,8 @@ const SpeakBetter = () => {
     const endpoint = isLogin ? '/auth/login' : '/auth/register';
     const body = isLogin ? { email, password } : { name, email, password };
 
+    setWakingUpMessage(isLogin ? "Fetching progress data" : "Creating your setup");
+    setIsWakingUp(true);
     try {
       const res = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
@@ -75,6 +84,8 @@ const SpeakBetter = () => {
       }
     } catch (err) {
       toast.error("Could not connect to the server");
+    } finally {
+      setIsWakingUp(false);
     }
   };
 
@@ -151,7 +162,8 @@ const SpeakBetter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 overflow-x-hidden">
+    <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 overflow-x-hidden">
+      {isWakingUp && <WakingUpLoader message={wakingUpMessage} />}
       {/* Dynamic Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-indigo-600/10 blur-[150px] rounded-full" />
@@ -212,7 +224,7 @@ const SpeakBetter = () => {
                   <CardContent className="space-y-4">
                     {!isLogin && (
                       <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Full Name</label>
+                        <label className="text-xs font-bold text-slate-400 uppercase">Full Name</label>
                         <Input 
                           placeholder="John Doe" 
                           value={name} 
@@ -222,7 +234,7 @@ const SpeakBetter = () => {
                       </div>
                     )}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase">Email Address</label>
+                      <label className="text-xs font-bold text-slate-400 uppercase">Email Address</label>
                       <Input 
                         placeholder="email@example.com" 
                         type="email" 
@@ -232,7 +244,7 @@ const SpeakBetter = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase">Password</label>
+                      <label className="text-xs font-bold text-slate-400 uppercase">Password</label>
                       <Input 
                         placeholder="••••••••" 
                         type="password" 
@@ -244,7 +256,7 @@ const SpeakBetter = () => {
                     <Button className="w-full bg-indigo-600 hover:bg-indigo-500 h-12 text-lg font-bold shadow-lg shadow-indigo-600/20" onClick={handleAuth}>
                       {isLogin ? "Sign In" : "Get Started"}
                     </Button>
-                    <p className="text-sm text-center text-slate-500 pt-2">
+                    <p className="text-sm text-center text-slate-400 pt-2">
                       {isLogin ? "New to SpeakBetter?" : "Already have an account?"}
                       <button 
                         className="ml-2 text-indigo-400 font-bold hover:text-indigo-300 transition-colors"
@@ -284,7 +296,7 @@ const SpeakBetter = () => {
                   <div className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-400 rounded-2xl border border-orange-500/20 text-sm font-black shadow-lg shadow-orange-500/5">
                     <Flame size={16} fill="currentColor" /> {streak} DAY STREAK
                   </div>
-                  <Button variant="ghost" size="icon" onClick={handleLogout} className="text-slate-500 hover:text-rose-400 rounded-xl bg-slate-900 border border-slate-800">
+                  <Button variant="ghost" size="icon" onClick={handleLogout} className="text-slate-400 hover:text-rose-400 rounded-xl bg-slate-900 border border-slate-800">
                     <LogOut size={20} />
                   </Button>
                </div>
@@ -346,7 +358,7 @@ const SpeakBetter = () => {
                             <h4 className="font-bold text-lg mb-1">
                                {isRecording ? "Listening..." : isAnalyzing ? "AI Coach is thinking..." : "Tap to record"}
                             </h4>
-                            <p className="text-slate-500 text-sm font-medium">Record yourself speaking the English sentence above.</p>
+                            <p className="text-slate-400 text-sm font-medium">Record yourself speaking the English sentence above.</p>
                          </div>
                      </div>
                   </div>
@@ -365,7 +377,7 @@ const SpeakBetter = () => {
                             </h3>
                             <div className="flex items-center gap-3">
                                <div className="text-right">
-                                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mastery Score</p>
+                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mastery Score</p>
                                   <p className="text-3xl font-black text-emerald-400">{feedback.score}/10</p>
                                </div>
                             </div>
@@ -378,7 +390,7 @@ const SpeakBetter = () => {
                                   <span className="text-xs font-black uppercase tracking-widest">Recommended Version</span>
                                </div>
                                <p className="text-lg leading-relaxed font-medium">{feedback.corrected}</p>
-                               <Button variant="ghost" size="sm" className="mt-4 text-slate-500 hover:text-white p-0 gap-2">
+                               <Button variant="ghost" size="sm" className="mt-4 text-slate-400 hover:text-white p-0 gap-2">
                                   <Volume2 size={16} /> Listen to model
                                </Button>
                             </div>
