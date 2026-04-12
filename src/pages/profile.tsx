@@ -1,248 +1,331 @@
-import React from 'react';
-import { Phone, Mail } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { User, Settings, Award, Flame, Target, BookOpen, LogOut, Camera, Mail, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Landing: React.FC = () => {
-  const skills = [
-    'Visual Design',
-    'Interaction Design',
-    'Usability Testing',
-    'Wireframing & Prototyping',
-    'User Research',
-    'Design Systems',
-    'Figma',
-    'Adobe Creative Suite',
-  ];
+const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
-  const experiences = [
-    {
-      title: 'Senior UI/UX Designer',
-      company: 'Creative Agency Co.',
-      period: '2022 - Present',
-      bullets: [
-        'Led design system implementation across 5 product teams',
-        'Increased user engagement by 40% through UX improvements',
-        'Mentored junior designers and conducted design reviews',
-      ],
-    },
-    {
-      title: 'UI/UX Designer',
-      company: 'Tech Startup Inc.',
-      period: '2019 - 2022',
-      bullets: [
-        'Designed mobile and web applications from concept to launch',
-        'Conducted user research and usability testing sessions',
-        'Collaborated with developers to ensure design fidelity',
-      ],
-    },
-  ];
+const Profile: React.FC = () => {
+    const navigate = useNavigate();
+    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [user, setUser] = useState<any>(null);
+    const [stats, setStats] = useState<any>(null);
+    const [name, setName] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
 
-  return (
-    <div className="min-h-screen bg-resume-bg relative overflow-hidden">
-      {/* Decorative Elements */}
-      <DecorativeBlob className="absolute top-20 right-10 w-32 h-32 animate-float" color="hsl(var(--resume-accent))" />
-      <DecorativeBlob className="absolute bottom-40 left-10 w-24 h-24 animate-float-slow" color="hsl(var(--resume-highlight))" />
-      <DecorativeDots className="absolute top-40 left-20" />
-      <DecorativeDots className="absolute bottom-20 right-32" />
-      <DecorativeCurve className="absolute top-1/3 right-0" />
-      <DecorativeArrow className="absolute bottom-1/4 left-1/4" />
+    useEffect(() => {
+        if (!token) {
+            navigate('/practice');
+            return;
+        }
+        loadUserData();
+    }, [token]);
 
-      <div className="container mx-auto px-6 py-12 relative z-10">
-        {/* Header */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-16">
-          <div className="flex items-center gap-6 mb-4 sm:mb-0">
-            <div className="flex items-center gap-2 text-resume-text">
-              <Phone className="w-4 h-4" />
-              <span className="text-sm">+1 (555) 123-4567</span>
-            </div>
-            <div className="flex items-center gap-2 text-resume-text">
-              <Mail className="w-4 h-4" />
-              <span className="text-sm">hello@yourname.com</span>
-            </div>
-          </div>
-          <DecorativeDots />
-        </header>
+    const loadUserData = async () => {
+        try {
+            const [userRes, statsRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/auth/me`, { 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                }),
+                fetch(`${API_BASE_URL}/progress/stats`, { 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                })
+            ]);
 
-        {/* Hero Section */}
-        <section className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-          <div>
-            <p className="text-resume-accent text-lg mb-2">Hello, I'm</p>
-            <h1 className="text-5xl lg:text-7xl font-bold text-resume-heading mb-4">
-              Your Name
-            </h1>
-            <p className="text-2xl lg:text-3xl text-resume-card mb-6">
-              UI/UX Designer
-            </p>
-            <p className="text-resume-text text-lg leading-relaxed max-w-lg">
-              I create intuitive digital experiences that connect users with products 
-              through thoughtful design and research-driven solutions.
-            </p>
-          </div>
-          <div className="flex justify-center lg:justify-end">
-            <div className="relative">
-              <div className="w-64 h-64 lg:w-80 lg:h-80 rounded-full bg-resume-card flex items-center justify-center border-4 border-resume-accent">
-                <span className="text-resume-card-foreground text-6xl font-bold">YN</span>
-              </div>
-              <DecorativeBracket className="absolute -top-4 -left-4" />
-              <DecorativeBracket className="absolute -bottom-4 -right-4 rotate-180" />
-            </div>
-          </div>
-        </section>
+            if (userRes.ok) {
+                const userData = await userRes.json();
+                setUser(userData);
+                setName(userData.name);
+            }
+            if (statsRes.ok) {
+                setStats(await statsRes.json());
+            }
+        } catch (err) {
+            toast.error("Failed to load profile data");
+        }
+    };
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - About & Experience */}
-          <div className="lg:col-span-2 space-y-12">
-            {/* About Section */}
-            <section className="bg-resume-card rounded-3xl p-8 relative overflow-hidden">
-              <DecorativeCorner className="absolute top-0 right-0" />
-              <h2 className="text-2xl font-bold text-resume-card-foreground mb-4">About Me</h2>
-              <p className="text-resume-card-foreground/90 leading-relaxed">
-                With over 5 years of experience in UI/UX design, I specialize in creating 
-                user-centered digital products that solve real problems. My approach combines 
-                strategic thinking with creative execution, ensuring every design decision 
-                is backed by research and delivers measurable results. I'm passionate about 
-                accessibility, design systems, and mentoring the next generation of designers.
-              </p>
-            </section>
+    const handleUpdateProfile = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/auth/me`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name })
+            });
 
-            {/* Experience Section */}
-            <section>
-              <h2 className="text-2xl font-bold text-resume-heading mb-8">Work Experience</h2>
-              <div className="space-y-8">
-                {experiences.map((exp, index) => (
-                  <div key={index} className="relative pl-8 border-l-2 border-resume-muted">
-                    <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-resume-highlight" />
-                    <div className="mb-2">
-                      <h3 className="text-xl font-semibold text-resume-heading">{exp.title}</h3>
-                      <p className="text-resume-card">{exp.company}</p>
-                      <p className="text-resume-muted text-sm">{exp.period}</p>
-                    </div>
-                    <ul className="space-y-2">
-                      {exp.bullets.map((bullet, bIndex) => (
-                        <li key={bIndex} className="text-resume-text flex items-start gap-2">
-                          <span className="text-resume-highlight mt-1.5">•</span>
-                          {bullet}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
+            if (res.ok) {
+                toast.success("Profile updated successfully!");
+                setIsEditing(false);
+                loadUserData();
+            } else {
+                toast.error("Update failed");
+            }
+        } catch (err) {
+            toast.error("Error updating profile");
+        }
+    };
 
-          {/* Right Column - Skills & Education */}
-          <div className="space-y-12">
-            {/* Skills Section */}
-            <section>
-              <h2 className="text-2xl font-bold text-resume-heading mb-6">Skills</h2>
-              <div className="flex flex-wrap gap-3">
-                {skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-resume-skill-bg text-resume-text rounded-full text-sm 
-                               transition-all duration-300 hover:bg-resume-accent hover:text-white 
-                               hover:scale-105 cursor-default"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </section>
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setToken(null);
+        navigate('/practice');
+    };
 
-            {/* Education Section */}
-            <section>
-              <h2 className="text-2xl font-bold text-resume-heading mb-6">Education</h2>
-              <div className="bg-resume-muted/30 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-resume-heading">
-                  Bachelor of Fine Arts
-                </h3>
-                <p className="text-resume-card">Graphic Design</p>
-                <p className="text-resume-text text-sm mt-1">
-                  University of Design • 2015 - 2019
-                </p>
-              </div>
-            </section>
-
-            {/* Decorative Quote */}
-            <div className="relative">
-              <DecorativeQuote className="absolute -top-4 -left-2 w-8 h-8 text-resume-accent opacity-50" />
-              <p className="text-resume-text italic pl-8">
-                "Design is not just what it looks like. Design is how it works."
-              </p>
-              <p className="text-resume-muted text-sm pl-8 mt-2">— Steve Jobs</p>
-            </div>
-          </div>
+    if (!user) return (
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
         </div>
-      </div>
-    </div>
-  );
+    );
+
+    return (
+        <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20">
+            {/* Background Glows */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full" />
+                <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-500/10 blur-[120px] rounded-full" />
+            </div>
+
+            <div className="container mx-auto px-6 pt-12 relative z-10">
+                {/* Header */}
+                <header className="flex justify-between items-center mb-12">
+                    <Link to="/practice" className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                        SpeakBetter
+                    </Link>
+                    <Button variant="ghost" onClick={handleLogout} className="text-slate-400 hover:text-rose-400 gap-2">
+                        <LogOut size={18} /> Logout
+                    </Button>
+                </header>
+
+                <div className="grid lg:grid-cols-12 gap-8">
+                    {/* Left Column - User Info */}
+                    <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="lg:col-span-4 space-y-6"
+                    >
+                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-xl overflow-hidden shadow-2xl">
+                            <div className="h-24 bg-gradient-to-r from-indigo-600 to-purple-600" />
+                            <CardContent className="relative pt-0">
+                                <div className="flex flex-col items-center -mt-12">
+                                    <div className="relative group">
+                                        <div className="w-24 h-24 rounded-2xl bg-slate-800 border-4 border-slate-950 flex items-center justify-center overflow-hidden shadow-2xl">
+                                            {user.avatar ? (
+                                                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <User size={40} className="text-slate-400" />
+                                            )}
+                                        </div>
+                                        <button className="absolute bottom-0 right-0 p-1.5 bg-indigo-500 rounded-lg border-2 border-slate-950 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Camera size={14} />
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="mt-4 text-center w-full">
+                                        {isEditing ? (
+                                            <div className="space-y-3 mt-4">
+                                                <Input 
+                                                    value={name} 
+                                                    onChange={e => setName(e.target.value)}
+                                                    className="bg-slate-800/50 border-slate-700 text-center"
+                                                    placeholder="Enter your name"
+                                                />
+                                                <div className="flex gap-2 justify-center">
+                                                    <Button size="sm" onClick={handleUpdateProfile} className="bg-indigo-600">Save</Button>
+                                                    <Button size="sm" variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <h2 className="text-2xl font-bold">{user.name}</h2>
+                                                <p className="text-slate-400 text-sm mb-4">{user.email}</p>
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    onClick={() => setIsEditing(true)}
+                                                    className="border-slate-800 hover:bg-slate-800"
+                                                >
+                                                    <Settings size={14} className="mr-2" /> Edit Profile
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 pt-8 border-t border-slate-800 space-y-4">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-slate-400 flex items-center gap-2">
+                                            <Mail size={14} /> Email
+                                        </span>
+                                        <span className="font-medium">{user.email}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-slate-400 flex items-center gap-2">
+                                            <Shield size={14} /> Level
+                                        </span>
+                                        <span className="text-indigo-400 font-bold">Intermediate</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-slate-400 flex items-center gap-2">
+                                            <Target size={14} /> Daily Goal
+                                        </span>
+                                        <span className="font-medium text-emerald-400">10/10 mins</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Recent Achievements */}
+                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-xl">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-500">Achievements</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-4 gap-4">
+                                    {[1, 2, 3, 4].map(i => (
+                                        <div key={i} className={`aspect-square rounded-xl flex items-center justify-center ${i < 3 ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-lg shadow-indigo-500/10' : 'bg-slate-800 text-slate-600 border border-slate-700'}`}>
+                                            <Award size={24} />
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="text-xs text-center text-slate-500 mt-4">2 more to reach Master level</p>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
+
+                    {/* Right Column - Stats & Activity */}
+                    <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="lg:col-span-8 space-y-8"
+                    >
+                        {/* Stats Summary */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <StatCard 
+                                icon={<Flame className="text-orange-500" />}
+                                label="Current Streak"
+                                value={stats?.streak || 0}
+                                suffix="Days"
+                                trend="+2 today"
+                            />
+                            <StatCard 
+                                icon={<Target className="text-indigo-500" />}
+                                label="Avg Score"
+                                value={8.4}
+                                suffix="/10"
+                                trend="+0.5 this week"
+                            />
+                            <StatCard 
+                                icon={<BookOpen className="text-purple-500" />}
+                                label="Total Sessions"
+                                value={stats?.total_sessions || 0}
+                                suffix="Lessons"
+                                trend="Top 5% of users"
+                            />
+                        </div>
+
+                        {/* Activity Graph Placeholder */}
+                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-xl p-8 shadow-2xl">
+                            <div className="flex justify-between items-center mb-8">
+                                <CardTitle>Learning Progress</CardTitle>
+                                <div className="flex gap-2">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Accuracy</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="h-[240px] flex items-end gap-2 px-4">
+                                {[40, 65, 45, 85, 55, 95, 75, 40, 60, 80, 50, 90].map((h, i) => (
+                                    <motion.div 
+                                        key={i}
+                                        initial={{ height: 0 }}
+                                        animate={{ height: `${h}%` }}
+                                        transition={{ delay: i * 0.05, duration: 0.8, ease: "easeOut" }}
+                                        className="flex-1 bg-gradient-to-t from-indigo-600/50 via-indigo-500/80 to-indigo-400 rounded-t-lg relative group"
+                                    >
+                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-700 px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                                            {h}% Score
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                            <div className="flex justify-between mt-4 text-[10px] text-slate-500 uppercase tracking-widest px-4 font-bold">
+                                <span>Jan</span>
+                                <span>Feb</span>
+                                <span>Mar</span>
+                                <span>Apr</span>
+                                <span>May</span>
+                                <span>Jun</span>
+                                <span>Jul</span>
+                                <span>Aug</span>
+                                <span>Sep</span>
+                                <span>Oct</span>
+                                <span>Nov</span>
+                                <span>Dec</span>
+                            </div>
+                        </Card>
+
+                        {/* Quick Actions */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Link to="/practice" className="group">
+                                <Card className="bg-indigo-600/10 border-indigo-500/20 hover:border-indigo-500/50 transition-all cursor-pointer group-hover:shadow-[0_0_30px_rgba(79,70,229,0.15)] overflow-hidden relative">
+                                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity translate-x-4 -translate-y-4">
+                                        <BookOpen size={120} />
+                                    </div>
+                                    <CardContent className="p-6">
+                                        <h3 className="text-xl font-bold text-indigo-400 mb-2 group-hover:translate-x-1 transition-transform flex items-center gap-2">
+                                            Start Practice <span className="text-indigo-500/50">→</span>
+                                        </h3>
+                                        <p className="text-sm text-slate-400">Jump back into your daily English session and keep the streak alive.</p>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                            <Link to="/progress" className="group">
+                                <Card className="bg-purple-600/10 border-purple-500/20 hover:border-purple-500/50 transition-all cursor-pointer group-hover:shadow-[0_0_30px_rgba(147,51,234,0.15)] overflow-hidden relative">
+                                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity translate-x-4 -translate-y-4">
+                                        <Target size={120} />
+                                    </div>
+                                    <CardContent className="p-6">
+                                        <h3 className="text-xl font-bold text-purple-400 mb-2 group-hover:translate-x-1 transition-transform flex items-center gap-2">
+                                            Detailed Stats <span className="text-purple-500/50">→</span>
+                                        </h3>
+                                        <p className="text-sm text-slate-400">Analyze your speech history, common mistakes and AI recommendations.</p>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                        </div>
+                    </motion.div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
-// Decorative Components
-const DecorativeBlob: React.FC<{ className?: string; color: string }> = ({ className, color }) => (
-  <svg className={className} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <path
-      fill={color}
-      d="M47.5,-57.2C59.9,-46.8,67.5,-30.5,70.4,-13.4C73.3,3.7,71.5,21.6,63.1,35.8C54.7,50,39.7,60.5,23.2,66.5C6.7,72.5,-11.3,74,-27.5,68.5C-43.7,63,-58.1,50.5,-66.3,34.8C-74.5,19.1,-76.5,0.2,-72.1,-16.5C-67.7,-33.2,-56.9,-47.7,-43.4,-57.9C-29.9,-68.1,-14.9,-74,1.2,-75.5C17.3,-77,35.1,-67.6,47.5,-57.2Z"
-      transform="translate(100 100)"
-    />
-  </svg>
+const StatCard: React.FC<{ icon: React.ReactNode, label: string, value: string | number, suffix?: string, trend?: string }> = ({ icon, label, value, suffix, trend }) => (
+    <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-xl hover:bg-slate-900/60 transition-colors shadow-lg">
+        <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-slate-800/80 rounded-lg border border-slate-700 shadow-inner">
+                    {icon}
+                </div>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+            </div>
+            <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black">{value}</span>
+                {suffix && <span className="text-sm text-slate-500">{suffix}</span>}
+            </div>
+            {trend && <p className="text-[10px] text-emerald-400 mt-2 font-bold uppercase tracking-tighter flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-emerald-400" /> {trend}
+            </p>}
+        </CardContent>
+    </Card>
 );
 
-const DecorativeDots: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={`flex gap-1.5 ${className}`}>
-    {[...Array(4)].map((_, i) => (
-      <div key={i} className="w-2 h-2 rounded-full bg-resume-accent/60" />
-    ))}
-  </div>
-);
-
-const DecorativeCurve: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} width="100" height="200" viewBox="0 0 100 200" fill="none">
-    <path
-      d="M100 0C100 0 50 50 50 100C50 150 100 200 100 200"
-      stroke="hsl(var(--resume-muted))"
-      strokeWidth="2"
-      strokeDasharray="8 8"
-    />
-  </svg>
-);
-
-const DecorativeArrow: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} width="60" height="60" viewBox="0 0 60 60" fill="none">
-    <path
-      d="M10 50L50 10M50 10H20M50 10V40"
-      stroke="hsl(var(--resume-highlight))"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const DecorativeBracket: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} width="40" height="40" viewBox="0 0 40 40" fill="none">
-    <path
-      d="M0 10V0H10M30 0H40V10M40 30V40H30M10 40H0V30"
-      stroke="hsl(var(--resume-accent))"
-      strokeWidth="3"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const DecorativeCorner: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} width="80" height="80" viewBox="0 0 80 80" fill="none">
-    <circle cx="80" cy="0" r="60" fill="hsl(var(--resume-accent))" opacity="0.3" />
-    <circle cx="80" cy="0" r="40" fill="hsl(var(--resume-accent))" opacity="0.2" />
-  </svg>
-);
-
-const DecorativeQuote: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
-  </svg>
-);
-
-export default Landing;
+export default Profile;

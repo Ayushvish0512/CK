@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Send, LogOut, Flame, Play, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mic, Send, LogOut, Flame, Play, CheckCircle2, AlertCircle, Sparkles, Volume2, History, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
-const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com'; // Adjust if your FastAPI is elsewhere
+const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
 const SpeakBetter = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -86,7 +86,7 @@ const SpeakBetter = () => {
 
   const startRecording = async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      toast.error("Your browser does not support audio recording. Use a modern browser like Chrome or Safari over HTTPS.");
+      toast.error("Audio recording not supported");
       return;
     }
 
@@ -107,16 +107,9 @@ const SpeakBetter = () => {
 
       mediaRecorder.start();
       setIsRecording(true);
-      toast.success("Recording started... Speak now!");
+      toast.success("Listening...");
     } catch (err: any) {
-      console.error("Mic error:", err);
-      if (err.name === 'NotAllowedError') {
-        toast.error("Microphone permission denied. Please enable it in browser settings.");
-      } else if (err.name === 'NotFoundError') {
-        toast.error("No microphone found on this device.");
-      } else {
-        toast.error(`Recording error: ${err.message || 'Unknown error'}`);
-      }
+      toast.error("Microphone access denied");
     }
   };
 
@@ -150,7 +143,7 @@ const SpeakBetter = () => {
         const audio = new Audio(`data:audio/wav;base64,${result.audio_data}`);
         audio.play();
       }
-      toast.success("Analysis complete!");
+      toast.success("AI Coach analyzed your speech!");
     } catch (err) {
       toast.error("Error analyzing speech");
       setIsAnalyzing(false);
@@ -158,74 +151,111 @@ const SpeakBetter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 overflow-x-hidden">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-indigo-600/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full" />
+      </div>
+
       <AnimatePresence mode="wait">
         {view === 'landing' ? (
           <motion.div 
             key="landing"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="flex flex-col items-center justify-center min-h-screen p-6 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6"
           >
-            <div className="max-w-3xl">
-              <motion.h1 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="text-6xl md:text-8xl font-black mb-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-              >
-                Master English <br /> with AI
-              </motion.h1>
-              <p className="text-xl text-slate-400 mb-12 max-w-xl mx-auto">
-                The most advanced AI tutor for mastering spoken English. 
-                Get real-time feedback, improve your grammar, and build a daily habit.
-              </p>
+            <div className="max-w-4xl w-full grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/20 mb-8"
+                >
+                  <Sparkles size={32} className="text-white" />
+                </motion.div>
+                <motion.h1 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="text-5xl md:text-7xl font-black mb-6 leading-tight"
+                >
+                  Speak with <br /> 
+                  <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Confidence.</span>
+                </motion.h1>
+                <p className="text-lg text-slate-400 mb-8 max-w-md">
+                   Master English through real-time conversations with your personal AI Coach. 
+                   Daily challenges, instant corrections, and personalized feedback.
+                </p>
+                <div className="flex gap-4 items-center">
+                   <div className="flex -space-x-3">
+                      {[1,2,3].map(i => (
+                        <div key={i} className="w-10 h-10 rounded-full border-2 border-slate-950 bg-slate-800" />
+                      ))}
+                   </div>
+                   <p className="text-sm text-slate-500 font-medium font-mono">JOIN 20,000+ LEARNERS</p>
+                </div>
+              </div>
 
-              <Card className="max-w-md mx-auto bg-slate-900/50 border-slate-800 backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle>{isLogin ? "Welcome Back" : "Join the Future"}</CardTitle>
-                  <CardDescription>
-                    {isLogin ? "Log in to continue your journey" : "Create an account to start practicing"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {!isLogin && (
-                    <Input 
-                      placeholder="Your Name" 
-                      value={name} 
-                      onChange={e => setName(e.target.value)}
-                      className="bg-slate-800/50 border-slate-700" 
-                    />
-                  )}
-                  <Input 
-                    placeholder="Email" 
-                    type="email" 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)}
-                    className="bg-slate-800/50 border-slate-700" 
-                  />
-                  <Input 
-                    placeholder="Password" 
-                    type="password" 
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)}
-                    className="bg-slate-800/50 border-slate-700" 
-                  />
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-500" onClick={handleAuth}>
-                    {isLogin ? "Sign In" : "Create Account"}
-                  </Button>
-                  <p className="text-sm text-slate-500">
-                    {isLogin ? "New here?" : "Already have an account?"}
-                    <button 
-                      className="ml-2 text-indigo-400 font-semibold hover:underline"
-                      onClick={() => setIsLogin(!isLogin)}
-                    >
-                      {isLogin ? "Register now" : "Login instead"}
-                    </button>
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ x: 50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+              >
+                <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-2xl shadow-2xl">
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-bold">{isLogin ? "Welcome back" : "Create Account"}</CardTitle>
+                    <CardDescription>
+                      {isLogin ? "Ready for your daily session?" : "Start your journey to fluency today."}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {!isLogin && (
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 uppercase">Full Name</label>
+                        <Input 
+                          placeholder="John Doe" 
+                          value={name} 
+                          onChange={e => setName(e.target.value)}
+                          className="bg-slate-800/50 border-slate-700" 
+                        />
+                      </div>
+                    )}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Email Address</label>
+                      <Input 
+                        placeholder="email@example.com" 
+                        type="email" 
+                        value={email} 
+                        onChange={e => setEmail(e.target.value)}
+                        className="bg-slate-800/50 border-slate-700" 
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Password</label>
+                      <Input 
+                        placeholder="••••••••" 
+                        type="password" 
+                        value={password} 
+                        onChange={e => setPassword(e.target.value)}
+                        className="bg-slate-800/50 border-slate-700" 
+                      />
+                    </div>
+                    <Button className="w-full bg-indigo-600 hover:bg-indigo-500 h-12 text-lg font-bold shadow-lg shadow-indigo-600/20" onClick={handleAuth}>
+                      {isLogin ? "Sign In" : "Get Started"}
+                    </Button>
+                    <p className="text-sm text-center text-slate-500 pt-2">
+                      {isLogin ? "New to SpeakBetter?" : "Already have an account?"}
+                      <button 
+                        className="ml-2 text-indigo-400 font-bold hover:text-indigo-300 transition-colors"
+                        onClick={() => setIsLogin(!isLogin)}
+                      >
+                        {isLogin ? "Create Account" : "Login Now"}
+                      </button>
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
           </motion.div>
         ) : (
@@ -233,159 +263,181 @@ const SpeakBetter = () => {
             key="app"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-6 md:p-12 max-w-5xl mx-auto"
+            className="relative z-10 container mx-auto px-6 py-12 pb-24"
           >
-            {/* Header */}
-            <div className="flex justify-between items-center mb-12">
-              <div className="flex items-center gap-4">
-                <div className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                  SpeakBetter
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full border border-orange-500/20 text-sm font-bold">
-                  <Flame size={16} fill="currentColor" /> {streak} Day Streak
-                </div>
-                <Link to="/progress">
-                   <Button variant="ghost" size="sm" className="text-indigo-400 hover:text-indigo-300">
-                      Stats & Progress
-                   </Button>
-                </Link>
-              </div>
-              <Button variant="ghost" className="text-slate-400 hover:text-white" onClick={handleLogout}>
-                <LogOut size={20} className="mr-2" /> Logout
-              </Button>
-            </div>
-
-            {/* Daily Task Card */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-2 space-y-8">
-                <Card className="bg-slate-900/30 border-slate-800 backdrop-blur-md overflow-hidden relative">
-                  <div className="absolute top-0 right-0 p-4">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{task?.date || "Today"}</span>
+            {/* Nav */}
+            <nav className="flex justify-between items-center mb-12">
+               <div className="flex items-center gap-8">
+                  <Link to="/" className="text-2xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    SpeakBetter
+                  </Link>
+                  <div className="hidden md:flex items-center gap-4">
+                    <Link to="/progress" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                       <History size={16} /> History
+                    </Link>
+                    <Link to="/profile" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                       <User size={16} /> Profile
+                    </Link>
                   </div>
-                  <CardHeader>
-                    <CardTitle className="text-indigo-400 text-sm font-bold uppercase tracking-widest">Today's Topic</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">{task?.task_en || "Loading challenge..."}</h2>
-                    <p className="text-xl text-slate-400 italic">{task?.task_hi}</p>
+               </div>
+               <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-400 rounded-2xl border border-orange-500/20 text-sm font-black shadow-lg shadow-orange-500/5">
+                    <Flame size={16} fill="currentColor" /> {streak} DAY STREAK
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={handleLogout} className="text-slate-500 hover:text-rose-400 rounded-xl bg-slate-900 border border-slate-800">
+                    <LogOut size={20} />
+                  </Button>
+               </div>
+            </nav>
 
-                    <div className="mt-12 flex flex-col items-center justify-center p-8 bg-slate-950/50 rounded-3xl border border-slate-800">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`w-24 h-24 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
-                          isRecording ? 'bg-rose-500 shadow-rose-500/50' : 'bg-indigo-600 shadow-indigo-600/50'
-                        }`}
-                        onClick={isRecording ? stopRecording : startRecording}
+            <div className="max-w-5xl mx-auto grid lg:grid-cols-12 gap-12">
+               {/* Main Content */}
+               <div className="lg:col-span-8 space-y-8">
+                  <header>
+                    <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] mb-2">Daily Challenge</p>
+                    <h2 className="text-4xl md:text-5xl font-black">{task?.task_en || "Ready for today?"}</h2>
+                    <p className="text-xl text-slate-400 mt-4 leading-relaxed italic">{task?.task_hi}</p>
+                  </header>
+
+                  {/* Recording Studio */}
+                  <div className="relative aspect-[16/9] md:aspect-[21/9] bg-slate-900/20 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-3xl flex items-center justify-center p-8">
+                     <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
+                     
+                     <div className="flex flex-col items-center gap-8 relative z-10 w-full max-w-sm">
+                         {isRecording && (
+                            <div className="flex items-center gap-1 h-8 mb-4">
+                               {[...Array(12)].map((_, i) => (
+                                 <motion.div
+                                   key={i}
+                                   animate={{ height: [4, 24, 4] }}
+                                   transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.05 }}
+                                   className="w-1 bg-indigo-400 rounded-full"
+                                 />
+                               ))}
+                            </div>
+                         )}
+                         
+                         <motion.button
+                           whileHover={{ scale: 1.05 }}
+                           whileTap={{ scale: 0.95 }}
+                           onClick={isRecording ? stopRecording : startRecording}
+                           disabled={isAnalyzing}
+                           className={`relative w-28 h-28 rounded-3xl flex items-center justify-center shadow-2xl transition-all duration-500 group ${
+                             isRecording 
+                             ? 'bg-rose-500 shadow-rose-500/40' 
+                             : 'bg-indigo-600 shadow-indigo-600/40 hover:shadow-indigo-500/60'
+                           } ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                         >
+                            {isAnalyzing ? (
+                              <div className="w-10 h-10 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                            ) : isRecording ? (
+                              <div className="w-8 h-8 bg-white rounded-lg" />
+                            ) : (
+                              <Mic size={40} className="text-white group-hover:scale-110 transition-transform" />
+                            )}
+                            
+                            {/* Pulse Rings */}
+                            {isRecording && (
+                               <div className="absolute inset-0 rounded-3xl animate-ping-slow bg-rose-500/30 -z-10" />
+                            )}
+                         </motion.button>
+                         
+                         <div className="text-center">
+                            <h4 className="font-bold text-lg mb-1">
+                               {isRecording ? "Listening..." : isAnalyzing ? "AI Coach is thinking..." : "Tap to record"}
+                            </h4>
+                            <p className="text-slate-500 text-sm font-medium">Record yourself speaking the English sentence above.</p>
+                         </div>
+                     </div>
+                  </div>
+
+                  {/* Feedback Section */}
+                  <AnimatePresence>
+                    {feedback && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-6"
                       >
-                        {isRecording ? <div className="w-8 h-8 bg-white rounded-sm" /> : <Mic size={40} className="text-white" />}
-                      </motion.button>
-                      <p className="mt-6 text-slate-400 font-medium animate-pulse">
-                        {isRecording ? "Listening... Tap to end" : isAnalyzing ? "Analyzing speech..." : "Tap to start speaking"}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Feedback Display */}
-                <AnimatePresence>
-                  {feedback && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="space-y-6"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="text-2xl font-bold">Session Feedback</div>
-                        <div className="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30 font-black text-xl">
-                          {feedback.score}/10
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="p-6 bg-slate-900/50 rounded-2xl border border-slate-800">
-                          <label className="text-xs font-bold text-emerald-400 uppercase mb-2 block">Perfect Version</label>
-                          <p className="text-lg leading-relaxed">{feedback.corrected}</p>
-                        </div>
-                        <div className="p-6 bg-slate-900/50 rounded-2xl border border-slate-800">
-                          <label className="text-xs font-bold text-indigo-400 uppercase mb-2 block">Translation</label>
-                          <p className="text-lg leading-relaxed">{feedback.hindi}</p>
-                        </div>
-                      </div>
-
-                      <div className="p-6 bg-indigo-600/10 rounded-2xl border border-indigo-500/20">
-                         <div className="flex gap-3">
-                            <CheckCircle2 className="text-indigo-400 shrink-0" />
-                            <div>
-                                <h4 className="font-bold text-indigo-400 mb-1">Coach Note</h4>
-                                <p className="text-slate-300">{feedback.feedback}</p>
+                         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                            <h3 className="text-2xl font-bold flex items-center gap-2">
+                               <Sparkles className="text-indigo-400" /> Session Analysis
+                            </h3>
+                            <div className="flex items-center gap-3">
+                               <div className="text-right">
+                                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mastery Score</p>
+                                  <p className="text-3xl font-black text-emerald-400">{feedback.score}/10</p>
+                               </div>
                             </div>
                          </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
 
-              {/* Sidebar Info */}
-              <div className="space-y-6">
-                <Card className="bg-slate-900/30 border-slate-800">
-                   <CardHeader>
-                      <CardTitle className="text-lg">Profile Management</CardTitle>
-                   </CardHeader>
-                   <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                         <label className="text-xs text-slate-500 font-bold uppercase">Display Name</label>
-                         <div className="flex gap-2">
-                            <Input 
-                               placeholder="Your Name" 
-                               value={name} 
-                               onChange={e => setName(e.target.value)}
-                               className="bg-slate-800/30 border-slate-700 h-9 text-sm"
-                            />
-                            <Button 
-                               size="sm" 
-                               className="bg-indigo-600 hover:bg-indigo-500"
-                               onClick={async () => {
-                                  try {
-                                     const res = await fetch(`${API_BASE_URL}/auth/me`, {
-                                        method: 'PUT',
-                                        headers: { 
-                                           'Authorization': `Bearer ${token}`,
-                                           'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ name })
-                                     });
-                                     if (res.ok) toast.success("Profile updated!");
-                                     else throw new Error();
-                                  } catch (err) {
-                                     toast.error("Failed to update profile");
-                                  }
-                               }}
-                            >
-                               Update
-                            </Button>
+                         <div className="grid md:grid-cols-2 gap-6">
+                            <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-3xl hover:border-slate-700 transition-colors group">
+                               <div className="flex items-center gap-2 mb-4 text-emerald-400">
+                                  <CheckCircle2 size={18} />
+                                  <span className="text-xs font-black uppercase tracking-widest">Recommended Version</span>
+                               </div>
+                               <p className="text-lg leading-relaxed font-medium">{feedback.corrected}</p>
+                               <Button variant="ghost" size="sm" className="mt-4 text-slate-500 hover:text-white p-0 gap-2">
+                                  <Volume2 size={16} /> Listen to model
+                               </Button>
+                            </div>
+                            <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-3xl hover:border-slate-700 transition-colors">
+                               <div className="flex items-center gap-2 mb-4 text-indigo-400">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                                  <span className="text-xs font-black uppercase tracking-widest">Your Input</span>
+                               </div>
+                               <p className="text-lg leading-relaxed text-slate-400 italic">"{feedback.user_input || "..."}"</p>
+                            </div>
                          </div>
-                      </div>
-                   </CardContent>
-                </Card>
 
-                <Card className="bg-slate-900/30 border-slate-800">
-                   <CardHeader>
-                      <CardTitle className="text-lg">Tips & Mastery</CardTitle>
-                   </CardHeader>
-                   <CardContent className="space-y-4">
-                      <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-800 flex gap-3">
-                         <AlertCircle className="text-amber-400 shrink-0" size={20} />
-                         <p className="text-xs text-slate-400">Speak slowly and clearly for better recognition.</p>
-                      </div>
-                      <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-800 flex gap-3">
-                         <AlertCircle className="text-blue-400 shrink-0" size={20} />
-                         <p className="text-xs text-slate-400">Try to use full sentences to improve grammar score.</p>
-                      </div>
-                   </CardContent>
-                </Card>
-              </div>
+                         <div className="p-8 bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-500/20 rounded-3xl relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:rotate-12 transition-transform">
+                                <Sparkles size={80} />
+                             </div>
+                             <div className="flex gap-4 relative z-10">
+                                <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 items-center justify-center shrink-0">
+                                   <Sparkles size={24} />
+                                </div>
+                                <div>
+                                   <h4 className="font-bold text-indigo-400 mb-2">Coach's Advice</h4>
+                                   <p className="text-slate-300 leading-relaxed text-lg">{feedback.feedback}</p>
+                                </div>
+                             </div>
+                         </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+               </div>
+
+               {/* Sidebar */}
+               <div className="lg:col-span-4 space-y-6">
+                  <Card className="bg-slate-900/30 border-slate-800 rounded-3xl">
+                     <CardHeader>
+                        <CardTitle className="text-lg">Coach's Tips</CardTitle>
+                     </CardHeader>
+                     <CardContent className="space-y-4">
+                        <TipCard 
+                          icon={<Volume2 className="text-blue-400" size={16} />}
+                          text="Enunciate every syllable clearly to improve your accuracy score."
+                        />
+                        <TipCard 
+                          icon={<History className="text-amber-400" size={16} />}
+                          text="Review your previous sessions in history to track common mistakes."
+                        />
+                        <TipCard 
+                          icon={<AlertCircle className="text-emerald-400" size={16} />}
+                          text="Daily practice of just 5 minutes is better than 1 hour weekly."
+                        />
+                     </CardContent>
+                  </Card>
+
+                  <div className="p-6 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl text-white shadow-xl shadow-indigo-600/10">
+                     <h4 className="font-bold mb-2">Pro Subscription</h4>
+                     <p className="text-sm opacity-80 mb-6 font-medium leading-relaxed">Unlock unlimited AI corrections and detailed mastery reports.</p>
+                     <Button className="w-full bg-white text-indigo-600 hover:bg-slate-100 font-bold rounded-xl h-12">Upgrade Now</Button>
+                  </div>
+               </div>
             </div>
           </motion.div>
         )}
@@ -393,5 +445,12 @@ const SpeakBetter = () => {
     </div>
   );
 };
+
+const TipCard = ({ icon, text }: { icon: React.ReactNode, text: string }) => (
+  <div className="flex gap-3 p-4 bg-slate-800/20 border border-white/5 rounded-2xl items-start">
+    <div className="mt-1">{icon}</div>
+    <p className="text-xs text-slate-400 leading-normal font-medium">{text}</p>
+  </div>
+);
 
 export default SpeakBetter;
