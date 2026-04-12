@@ -85,7 +85,7 @@ const Profile: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20">
+        <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20">
             {/* Background Glows */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full" />
