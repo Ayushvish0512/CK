@@ -8,6 +8,8 @@ import NotFound from "./pages/404";
 import Index from "./pages/Index";
 import Profile from "./pages/profile";
 import Chat from "./pages/Chat";
+import SpeakBetter from "./pages/SpeakBetter";
+import Progress from "./pages/Progress";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/picktime" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
            <Route path="/chat" element={<Chat />} />
+          <Route path="/practice" element={<SpeakBetter />} />
+          <Route path="/progress" element={<Progress />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
