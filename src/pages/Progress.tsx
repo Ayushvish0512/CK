@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import WakingUpLoader from '@/components/WakingUpLoader';
 
 const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
@@ -12,6 +13,7 @@ const Progress = () => {
   const [token] = useState(localStorage.getItem('token'));
   const [history, setHistory] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
+  const [isWakingUp, setIsWakingUp] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -20,16 +22,18 @@ const Progress = () => {
   }, [token]);
 
   const loadData = async () => {
+    setIsWakingUp(true);
     try {
       const [historyRes, statsRes] = await Promise.all([
         fetch(`${API_BASE_URL}/progress/history`, { headers: { 'Authorization': `Bearer ${token}` } }),
         fetch(`${API_BASE_URL}/progress/stats`, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
       
-      if (historyRes.ok) setHistory(await historyRes.json());
       if (statsRes.ok) setStats(await statsRes.json());
     } catch (err) {
       console.error("Failed to load progress data", err);
+    } finally {
+      setIsWakingUp(false);
     }
   };
 
@@ -44,6 +48,7 @@ const Progress = () => {
 
   return (
     <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20 overflow-x-hidden">
+      {isWakingUp && <WakingUpLoader message="Fetching progress data" />}
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-500/5 blur-[120px] rounded-full" />

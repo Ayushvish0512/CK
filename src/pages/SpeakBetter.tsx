@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import WakingUpLoader from '@/components/WakingUpLoader';
 
 const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
@@ -29,6 +30,8 @@ const SpeakBetter = () => {
   const [feedback, setFeedback] = useState<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const [isWakingUp, setIsWakingUp] = useState(false);
+  const [wakingUpMessage, setWakingUpMessage] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -37,6 +40,8 @@ const SpeakBetter = () => {
   }, [token]);
 
   const loadInitialData = async () => {
+    setWakingUpMessage("Fetching progress data");
+    setIsWakingUp(true);
     try {
       const [taskRes, statsRes] = await Promise.all([
         fetch(`${API_BASE_URL}/task/`, { headers: { 'Authorization': `Bearer ${token}` } }),
@@ -50,6 +55,8 @@ const SpeakBetter = () => {
       }
     } catch (err) {
       console.error("Failed to load data", err);
+    } finally {
+      setIsWakingUp(false);
     }
   };
 
@@ -57,6 +64,8 @@ const SpeakBetter = () => {
     const endpoint = isLogin ? '/auth/login' : '/auth/register';
     const body = isLogin ? { email, password } : { name, email, password };
 
+    setWakingUpMessage(isLogin ? "Fetching progress data" : "Creating your setup");
+    setIsWakingUp(true);
     try {
       const res = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
@@ -75,6 +84,8 @@ const SpeakBetter = () => {
       }
     } catch (err) {
       toast.error("Could not connect to the server");
+    } finally {
+      setIsWakingUp(false);
     }
   };
 
@@ -152,6 +163,7 @@ const SpeakBetter = () => {
 
   return (
     <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 overflow-x-hidden">
+      {isWakingUp && <WakingUpLoader message={wakingUpMessage} />}
       {/* Dynamic Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-indigo-600/10 blur-[150px] rounded-full" />
