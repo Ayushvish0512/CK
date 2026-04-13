@@ -78,3 +78,25 @@ The system consists of three main layers:
 
 **Status:** `PRODUCTION READY` | **Version:** `2.0 - Gemini Native`
 **Status:** `STABLE & OPTIMIZED` | **Version:** `2.1 - iOS Ready`
+---
+
+## ⛅ Weather Prediction ML Integration (April 13 Session)
+
+Successfully expanded the portfolio with a live **Weather Inference Dashboard** that communicates with a dedicated FastAPI ML backend.
+
+### 1. Multi-Dimensional Forecasting
+*   **Next Hour Analytics:** Real-time fetch from `/predict/next-hour` with high-precision temperature and condition badges.
+*   **Daily Sequence:** Interactive view of all remaining predictions for the current IST day via `/predict/today`.
+*   **Recursive Inference:** A custom-step forecast where users can specify an inference window (1-24h), fetching from `/predict/hours`.
+
+### 2. Frontend Engineering (CK Project)
+*   **[Weather.tsx](file:///C:/Users/Admin/Documents/ck/src/pages/Weather.tsx):** A brand new React component using a tabbed choice architecture.
+*   **State Management:** Leveraged `TanStack Query` for optimized fetching and caching of ML predictions.
+*   **UI/UX:** Implemented the "Render Waking Up" animation sequence to handle backend cold starts gracefully.
+*   **Routing:** Integrated `/weather` route into the core navigation via [App.tsx](file:///C:/Users/Admin/Documents/ck/src/App.tsx).
+
+### 3. API Synergy
+*   **Data Mapping:** Optimized the UI to handle complex IST/UTC timestamped JSON objects directly from the weather backend.
+*   **Security Architecture:** Documented the necessity of API keys for production-grade authentication and rate-limiting on Render.
+
+**Status:** `PRODUCTION READY` | **Version:** `1.0 - ML Inference Dash`
