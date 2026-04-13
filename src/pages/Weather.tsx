@@ -20,8 +20,8 @@ import WakingUpLoader from "@/components/WakingUpLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-// Fetching directly from the production Render backend.
-const API_BASE = "https://weather-project-k72v.onrender.com";
+// Using the /api/weather proxy (works on Local and Netlify)
+const API_BASE = "/api/weather";
 
 const Weather: React.FC = () => {
   const [activeTab, setActiveTab] = useState("next-hour");
