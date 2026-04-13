@@ -20,9 +20,8 @@ import WakingUpLoader from "@/components/WakingUpLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-// Using the local /api/weather proxy (configured in vite.config.ts) 
-// to solve the CORS issue purely from the frontend.
-const API_BASE = "/api/weather";
+// Fetching directly from the production Render backend.
+const API_BASE = "https://weather-project-k72v.onrender.com";
 
 const Weather: React.FC = () => {
   const [activeTab, setActiveTab] = useState("next-hour");
@@ -41,10 +40,18 @@ const Weather: React.FC = () => {
     queryFn: async () => {
       try {
         const res = await fetch(`${API_BASE}/predict/next-hour`);
+        const contentType = res.headers.get("content-type");
+        
         if (!res.ok) {
            console.error(`Next hour fetch failed: ${res.status}`);
            throw new Error(`Server returned ${res.status}`);
         }
+        
+        if (!contentType || !contentType.includes("application/json")) {
+           console.error("Non-JSON response received:", contentType);
+           throw new Error("API routing error: Server returned HTML instead of JSON");
+        }
+        
         const data = await res.json();
         
         // Validate if data has the expected prediction key
@@ -76,7 +83,14 @@ const Weather: React.FC = () => {
     queryFn: async () => {
       try {
         const res = await fetch(`${API_BASE}/predict/hours?hours=${customHours}`);
+        const contentType = res.headers.get("content-type");
+        
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        
+        if (!contentType || !contentType.includes("application/json")) {
+           throw new Error("Local routing error: Received HTML instead of API data");
+        }
+        
         const data = await res.json();
         if (!data || !Array.isArray(data.forecast)) {
            console.error("Malformed custom forecast response:", data);
@@ -106,7 +120,14 @@ const Weather: React.FC = () => {
     queryFn: async () => {
       try {
         const res = await fetch(`${API_BASE}/predict/today`);
+        const contentType = res.headers.get("content-type");
+        
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        
+        if (!contentType || !contentType.includes("application/json")) {
+           throw new Error("Local routing error: Received HTML instead of API data");
+        }
+        
         const data = await res.json();
         if (!data || !Array.isArray(data.forecast)) {
            console.error("Malformed today forecast response:", data);
