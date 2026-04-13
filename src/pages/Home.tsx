@@ -81,7 +81,8 @@ const projects = [
       why: "To provide specialized, local weather predictions that outperform generic global models by training on specific city-level data history.",
       what: "An end-to-end ML pipeline that collects historical data via OpenWeather API, trains a Scikit-learn model, and serves predictions via FastAPI.",
       whom: "Local businesses or developers needing precise, API-driven temperature forecasts for logistical or operational planning."
-    }
+    },
+    link: "/weather"
   }
 ];
 
