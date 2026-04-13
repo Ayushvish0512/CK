@@ -20,9 +20,8 @@ import WakingUpLoader from "@/components/WakingUpLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-// Using the local /api/weather proxy (configured in vite.config.ts) 
-// to solve the CORS issue purely from the frontend.
-const API_BASE = "/api/weather";
+// Fetching directly from the production Render backend.
+const API_BASE = "https://weather-project-k72v.onrender.com";
 
 const Weather: React.FC = () => {
   const [activeTab, setActiveTab] = useState("next-hour");
