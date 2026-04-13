@@ -44,6 +44,18 @@ The system consists of three main layers:
 ### 4. Live Updates
 *   Users can update their **Display Name** directly from the practice dashboard, showcasing seamless state updates between the React frontend and MongoDB backend.
 
+### 5. iOS & Safari Optimization (April 13 Update)
+*   **Proactive Permission Flow:** Implemented a dedicated "Initialize Voice Engine" sticky banner on the SpeakBetter page.
+*   **iOS Compatibility:** Solved the common iPhone/Safari issue where microphone access is blocked if not explicitly granted via a user-initiated event.
+*   **Persistence:** The setup status is saved in `localStorage`, so returning users aren't prompted again once their environment is optimized.
+
+---
+
+## 🏠 Home Page Hub
+*   **Portfolio Overhaul:** Transformed the Home page into a premium dark-themed portfolio.
+*   **Project 3Ws:** Detailed "Why, What, Whom" sections for all AI projects (Wellness AI, Text AI, etc.).
+*   **Direct Launcher:** Integrated a "Launch App" CTA directly into the SpeakBetter project card for seamless navigation.
+
 ---
 
 ## 🚀 How to Run
@@ -65,3 +77,4 @@ The system consists of three main layers:
 ---
 
 **Status:** `PRODUCTION READY` | **Version:** `2.0 - Gemini Native`
+**Status:** `STABLE & OPTIMIZED` | **Version:** `2.1 - iOS Ready`
