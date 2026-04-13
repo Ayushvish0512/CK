@@ -20,9 +20,9 @@ import WakingUpLoader from "@/components/WakingUpLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-// The user mentioned data coming FROM render TO fastapi TO app.
-// If the backend is on Render, use the full URL.
-const API_BASE = "https://weather-project-k72v.onrender.com";
+// Using the local /api/weather proxy (configured in vite.config.ts) 
+// to solve the CORS issue purely from the frontend.
+const API_BASE = "/api/weather";
 
 const Weather: React.FC = () => {
   const [activeTab, setActiveTab] = useState("next-hour");
@@ -39,9 +39,24 @@ const Weather: React.FC = () => {
   } = useQuery({
     queryKey: ["weather-next-hour"],
     queryFn: async () => {
-      const res = await fetch(`${API_BASE}/predict/next-hour`);
-      if (!res.ok) throw new Error("Server not responding");
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE}/predict/next-hour`);
+        if (!res.ok) {
+           console.error(`Next hour fetch failed: ${res.status}`);
+           throw new Error(`Server returned ${res.status}`);
+        }
+        const data = await res.json();
+        
+        // Validate if data has the expected prediction key
+        if (!data || typeof data.predicted_temp_c === 'undefined') {
+          console.error("Malformed next-hour response:", data);
+          throw new Error("Invalid data structure");
+        }
+        return data;
+      } catch (err: any) {
+        console.error("Fetch Exception:", err);
+        throw err;
+      }
     },
     // Prevent request storm
     placeholderData: (old) => old,
@@ -59,9 +74,19 @@ const Weather: React.FC = () => {
   } = useQuery({
     queryKey: ["weather-custom", customHours],
     queryFn: async () => {
-      const res = await fetch(`${API_BASE}/predict/hours?hours=${customHours}`);
-      if (!res.ok) throw new Error("Server not responding");
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE}/predict/hours?hours=${customHours}`);
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const data = await res.json();
+        if (!data || !Array.isArray(data.forecast)) {
+           console.error("Malformed custom forecast response:", data);
+           throw new Error("Invalid forecast structure");
+        }
+        return data;
+      } catch (err: any) {
+        console.error("Custom Fetch Error:", err);
+        throw err;
+      }
     },
     placeholderData: (old) => old,
     retry: 1,
@@ -79,9 +104,19 @@ const Weather: React.FC = () => {
   } = useQuery({
     queryKey: ["weather-today"],
     queryFn: async () => {
-      const res = await fetch(`${API_BASE}/predict/today`);
-      if (!res.ok) throw new Error("Server not responding");
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE}/predict/today`);
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const data = await res.json();
+        if (!data || !Array.isArray(data.forecast)) {
+           console.error("Malformed today forecast response:", data);
+           throw new Error("Invalid today structure");
+        }
+        return data;
+      } catch (err: any) {
+        console.error("Today Fetch Error:", err);
+        throw err;
+      }
     },
     placeholderData: (old) => old,
     retry: 1,

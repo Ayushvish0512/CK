@@ -95,8 +95,9 @@ Successfully expanded the portfolio with a live **Weather Inference Dashboard** 
 *   **UI/UX:** Implemented the "Render Waking Up" animation sequence to handle backend cold starts gracefully.
 *   **Routing:** Integrated `/weather` route into the core navigation via [App.tsx](file:///C:/Users/Admin/Documents/ck/src/App.tsx).
 
-### 3. API Synergy
+### 3. API Synergy & CORS Resolution
+*   **Vite Proxy Implementation:** Solved the "No Data" issue strictly within the `ck` project by configuring [vite.config.ts](file:///C:/Users/Admin/Documents/ck/vite.config.ts) to proxy requests to Render.
 *   **Data Mapping:** Optimized the UI to handle complex IST/UTC timestamped JSON objects directly from the weather backend.
-*   **Security Architecture:** Documented the necessity of API keys for production-grade authentication and rate-limiting on Render.
+*   **Fail-Safe Loading:** Implemented a non-blocking initial loading flow that allows entry to the dashboard even during server spin-up.
 
-**Status:** `PRODUCTION READY` | **Version:** `1.0 - ML Inference Dash`
+**Status:** `PRODUCTION READY` | **Version:** `1.1 - Stable Proxy Integration`
