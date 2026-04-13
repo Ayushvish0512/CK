@@ -58,7 +58,7 @@ const Progress = () => {
       <div className="container mx-auto px-6 pt-12 relative z-10">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
            <div className="flex items-center gap-6">
-              <Link to="/practice">
+              <Link to="/speakbetter">
                 <Button variant="ghost" size="icon" className="rounded-2xl bg-slate-900/50 border border-slate-800 hover:bg-slate-800 transition-all">
                   <ArrowLeft size={20} />
                 </Button>

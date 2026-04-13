@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Send, LogOut, Flame, Play, CheckCircle2, AlertCircle, Sparkles, Volume2, History, User } from 'lucide-react';
+import { Mic, Send, LogOut, Flame, Play, CheckCircle2, AlertCircle, Sparkles, Volume2, History, User, Info, Mic2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -32,6 +32,30 @@ const SpeakBetter = () => {
   const audioChunksRef = useRef<Blob[]>([]);
   const [isWakingUp, setIsWakingUp] = useState(false);
   const [wakingUpMessage, setWakingUpMessage] = useState("");
+  const [showMicPrompt, setShowMicPrompt] = useState(false);
+
+  useEffect(() => {
+    const hasSetup = localStorage.getItem("mic_ios_setup");
+    if (!hasSetup) {
+      setShowMicPrompt(true);
+    }
+  }, []);
+
+  const requestMicPermission = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast.error("Microphone not supported");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      localStorage.setItem("mic_ios_setup", "true");
+      setShowMicPrompt(false);
+      toast.success("Voice Engine initialized!");
+    } catch (err) {
+      toast.error("Microphone access denied");
+    }
+  };
 
   useEffect(() => {
     if (token) {
@@ -277,6 +301,30 @@ const SpeakBetter = () => {
             animate={{ opacity: 1 }}
             className="relative z-10 container mx-auto px-6 py-12 pb-24"
           >
+            {/* iOS Mic Setup Banner */}
+            <AnimatePresence>
+              {showMicPrompt && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="mb-8 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl overflow-hidden"
+                >
+                  <div className="px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 font-sans">
+                    <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <Info className="w-5 h-5 text-indigo-400" />
+                      <p>Running on <strong className="text-white">iOS/Safari</strong>? Initialize the mic first to ensure stable recording.</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <button onClick={() => setShowMicPrompt(false)} className="text-xs text-slate-500 hover:text-slate-300">Skip</button>
+                      <Button onClick={requestMicPermission} size="sm" className="bg-indigo-600 hover:bg-indigo-500 text-xs h-9 px-4 rounded-xl gap-2 shadow-lg shadow-indigo-600/20">
+                        <Mic2 size={14} /> Initialize Voice
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             {/* Nav */}
             <nav className="flex justify-between items-center mb-12">
                <div className="flex items-center gap-8">

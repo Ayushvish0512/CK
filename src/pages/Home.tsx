@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const projects = [
   {
@@ -27,7 +28,8 @@ const projects = [
       why: "To bridge the gap between understanding and speaking English for Hindi speakers by providing a judgment-free practice environment.",
       what: "A multimodal AI coach using Gemini 1.5/2.0 that provides real-time corrections, native-audio imprinting (shadowing), and contextual Hindi explanations.",
       whom: "Hindi-speaking ESL learners looking to build speaking confidence and fluency through daily active practice."
-    }
+    },
+    link: "/speakbetter"
   },
   {
     title: "Wellness AI",
@@ -97,7 +99,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <Badge variant="outline" className="mb-6 px-4 py-1 border-blue-500/30 text-blue-400 bg-blue-500/5 backdrop-blur-sm">
-              AI & Automation Engineer
+              AI & Automation Expert
             </Badge>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-500">
               Building the Future <br /> of Intelligent Systems
@@ -124,6 +126,7 @@ const Home: React.FC = () => {
           </motion.div>
         </div>
       </section>
+
 
       {/* Projects Section */}
       <section id="projects" className="py-20 px-6">
@@ -168,6 +171,15 @@ const Home: React.FC = () => {
                     <p className="text-slate-400 mb-6 text-lg">
                       {project.description}
                     </p>
+                    {project.link && (
+                      <Link 
+                        to={project.link} 
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition-all border border-white/10 group/btn"
+                      >
+                        Launch App 
+                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
+                    )}
                   </div>
                   
                   <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-8 md:border-l md:border-white/10 md:pl-8">
