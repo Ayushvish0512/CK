@@ -7,6 +7,13 @@ export default defineConfig(() => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      '/api/weather': {
+         target: 'https://weather-project-k72v.onrender.com',
+         changeOrigin: true,
+         rewrite: (path) => path.replace(/^\/api\/weather/, '')
+      }
+    }
   },
   plugins: [react()],
   resolve: {
