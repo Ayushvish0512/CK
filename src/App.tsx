@@ -24,7 +24,7 @@ const App = () => (
           <Route path="/picktime" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
            <Route path="/chat" element={<Chat />} />
-          <Route path="/practice" element={<SpeakBetter />} />
+          <Route path="/speakbetter" element={<SpeakBetter />} />
           <Route path="/progress" element={<Progress />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

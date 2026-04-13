@@ -21,7 +21,7 @@ const Profile: React.FC = () => {
 
     useEffect(() => {
         if (!token) {
-            navigate('/practice');
+            navigate('/speakbetter');
             return;
         }
         loadUserData();
@@ -80,7 +80,7 @@ const Profile: React.FC = () => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         setToken(null);
-        navigate('/practice');
+        navigate('/speakbetter');
     };
 
     if (!user) return (
@@ -101,7 +101,7 @@ const Profile: React.FC = () => {
             <div className="container mx-auto px-6 pt-12 relative z-10">
                 {/* Header */}
                 <header className="flex justify-between items-center mb-12">
-                    <Link to="/practice" className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    <Link to="/speakbetter" className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                         SpeakBetter
                     </Link>
                     <Button variant="ghost" onClick={handleLogout} className="text-slate-400 hover:text-rose-400 gap-2">
@@ -280,7 +280,7 @@ const Profile: React.FC = () => {
 
                         {/* Quick Actions */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Link to="/practice" className="group">
+                            <Link to="/speakbetter" className="group">
                                 <Card className="bg-indigo-600/10 border-indigo-500/20 hover:border-indigo-500/50 transition-all cursor-pointer group-hover:shadow-[0_0_30px_rgba(79,70,229,0.15)] overflow-hidden relative">
                                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity translate-x-4 -translate-y-4">
                                         <BookOpen size={120} />
