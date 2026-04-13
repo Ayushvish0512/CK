@@ -1,16 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { 
-  HeartPulse, 
-  MessageSquareText, 
-  CloudSun, 
-  Zap, 
-  Mic2, 
-  Mail, 
+import {
+  HeartPulse,
+  MessageSquareText,
+  CloudSun,
+  Zap,
+  Mic2,
+  Mail,
   ArrowRight,
   ShieldCheck,
   BrainCircuit,
-  Globe
+  Globe,
+  Github,
+  Linkedin,
+  Instagram
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -92,7 +95,7 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="relative pt-24 pb-16 px-6 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-500/10 to-transparent blur-3xl -z-10" />
-        
+
         <div className="max-w-5xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -106,18 +109,18 @@ const Home: React.FC = () => {
               Building the Future <br /> of Intelligent Systems
             </h1>
             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-              I specialize in creating high-performance AI agents, localized LLM systems, 
+              I specialize in creating high-performance AI agents, localized LLM systems,
               and automated marketing pipelines that drive real-world impact.
             </p>
-            
+
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="#projects" 
+              <a
+                href="#projects"
                 className="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] flex items-center gap-2"
               >
                 View Projects <ArrowRight className="w-4 h-4" />
               </a>
-              <a 
+              <a
                 href="mailto:ayushvishwakarma0512@gmail.com"
                 className="px-8 py-3 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-medium transition-all border border-slate-700 flex items-center gap-2"
               >
@@ -136,7 +139,7 @@ const Home: React.FC = () => {
             <div className="max-w-2xl">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Portfolio</h2>
               <p className="text-slate-400 text-lg">
-                A selection of AI projects focusing on large language models, 
+                A selection of AI projects focusing on large language models,
                 multimodal interaction, and production-grade automation.
               </p>
             </div>
@@ -159,7 +162,7 @@ const Home: React.FC = () => {
               >
                 {/* Visual Accent */}
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-700" />
-                
+
                 <div className="flex flex-col md:flex-row gap-8 relative z-10">
                   <div className="md:w-1/3">
                     <div className="mb-6 p-4 rounded-2xl bg-white/5 w-fit border border-white/10">
@@ -173,16 +176,16 @@ const Home: React.FC = () => {
                       {project.description}
                     </p>
                     {project.link && (
-                      <Link 
-                        to={project.link} 
+                      <Link
+                        to={project.link}
                         className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition-all border border-white/10 group/btn"
                       >
-                        Launch App 
+                        Launch App
                         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                       </Link>
                     )}
                   </div>
-                  
+
                   <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-8 md:border-l md:border-white/10 md:pl-8">
                     <div className="space-y-3">
                       <div className="text-xs font-black uppercase tracking-[0.2em] text-blue-400/80 flex items-center gap-2">
@@ -192,7 +195,7 @@ const Home: React.FC = () => {
                         {project.threeWs.why}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <div className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400/80 flex items-center gap-2">
                         <Zap className="w-3 h-3" /> What
@@ -201,7 +204,7 @@ const Home: React.FC = () => {
                         {project.threeWs.what}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <div className="text-xs font-black uppercase tracking-[0.2em] text-rose-400/80 flex items-center gap-2">
                         <Globe className="w-3 h-3" /> Whom
@@ -223,12 +226,33 @@ const Home: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8 italic">"Building bridges between data and decisions."</h2>
           <div className="flex justify-center gap-8 text-slate-500">
-            <span className="hover:text-blue-400 transition-colors cursor-pointer">GitHub</span>
-            <span className="hover:text-blue-400 transition-colors cursor-pointer">LinkedIn</span>
-            <span className="hover:text-blue-400 transition-colors cursor-pointer">Twitter</span>
+            <a
+              href="https://github.com/Ayushvish0512"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-all flex items-center gap-2"
+            >
+              <Github className="w-5 h-5" /> <span className="hidden sm:inline">GitHub</span>
+            </a>
+            <a
+              href="https://in.linkedin.com/in/ayushvishwakarma0512?trk=people-guest_people_search-card"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-blue-400 transition-all flex items-center gap-2"
+            >
+              <Linkedin className="w-5 h-5" /> <span className="hidden sm:inline">LinkedIn</span>
+            </a>
+            <a
+              href="https://instagram.com/ayushvishwakarma14.09"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-400 transition-all flex items-center gap-2"
+            >
+              <Instagram className="w-5 h-5" /> <span className="hidden sm:inline">Instagram</span>
+            </a>
           </div>
-          <p className="mt-12 text-sm text-slate-600">
-            © 2025 CK AI Labs. All rights reserved.
+          <p className="mt-12 text-sm text-slate-600 font-mono tracking-widest uppercase">
+            © 2026 Ayush Vishwakarma. Built with Precision.
           </p>
         </div>
       </footer>
