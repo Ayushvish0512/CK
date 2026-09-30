@@ -120,6 +120,12 @@ const Home: React.FC = () => {
               >
                 View Projects <ArrowRight className="w-4 h-4" />
               </a>
+              <Link
+                to="/aboutme"
+                className="px-8 py-3 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-medium transition-all border border-slate-700 flex items-center gap-2"
+              >
+                About Me <ArrowRight className="w-4 h-4" />
+              </Link>
               <a
                 href="mailto:ayushvishwakarma0512@gmail.com"
                 className="px-8 py-3 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-medium transition-all border border-slate-700 flex items-center gap-2"

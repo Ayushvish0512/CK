@@ -11,6 +11,7 @@ import Chat from "./pages/Chat";
 import SpeakBetter from "./pages/SpeakBetter";
 import Progress from "./pages/Progress";
 import Weather from "./pages/Weather";
+import AboutMe from "./pages/AboutMe";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/speakbetter" element={<SpeakBetter />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/weather" element={<Weather />} />
+          <Route path="/aboutme" element={<AboutMe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
