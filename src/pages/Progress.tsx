@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, Calendar, Target, Award, Sparkles, Filter, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import WakingUpLoader from '@/components/WakingUpLoader';
 
@@ -11,15 +11,18 @@ const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
 const Progress = () => {
   const [token] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
   const [history, setHistory] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [isWakingUp, setIsWakingUp] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      loadData();
+    if (!token) {
+      navigate('/speakbetter');
+      return;
     }
-  }, [token]);
+    loadData();
+  }, [token, navigate]);
 
   const loadData = async () => {
     setIsWakingUp(true);
