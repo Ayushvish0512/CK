@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link, useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import WakingUpLoader from '@/components/WakingUpLoader';
 
 const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
@@ -51,7 +50,11 @@ const Progress = () => {
 
   return (
     <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20 overflow-x-hidden">
-      {isWakingUp && <WakingUpLoader message="Fetching progress data" />}
+      {isWakingUp && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-indigo-500/30 border-t-indigo-500"></div>
+        </div>
+      )}
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-500/5 blur-[120px] rounded-full" />

@@ -32,7 +32,7 @@ const projects = [
       what: "A multimodal AI coach using Gemini 1.5/2.0 that provides real-time corrections, native-audio imprinting (shadowing), and contextual Hindi explanations.",
       whom: "Hindi-speaking ESL learners looking to build speaking confidence and fluency through daily active practice."
     },
-    link: "/speakbetter"
+    link: "/wake/speakbetter"
   },
   {
     title: "Wellness AI",
@@ -85,7 +85,7 @@ const projects = [
       what: "An end-to-end ML pipeline that collects historical data via OpenWeather API, trains a Scikit-learn model, and serves predictions via FastAPI.",
       whom: "Local businesses or developers needing precise, API-driven temperature forecasts for logistical or operational planning."
     },
-    link: "/weather"
+    link: "/wake/weather"
   }
 ];
 

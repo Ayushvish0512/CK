@@ -16,7 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import WakingUpLoader from "@/components/WakingUpLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
@@ -182,7 +181,10 @@ const Weather: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 z-[100] bg-[#030712] flex flex-col items-center justify-center p-6"
           >
-            <WakingUpLoader message={errorNext ? "Engine Error" : "Starting ML Engine"} />
+            <div className="flex flex-col items-center justify-center gap-4 text-indigo-200">
+              <div className="animate-spin rounded-full h-10 w-10 border-2 border-indigo-500/30 border-t-indigo-500"></div>
+              <span className="text-xs font-code">{errorNext ? "Inference Error" : "Loading forecasts..."}</span>
+            </div>
 
             <motion.div
               initial={{ opacity: 0 }}

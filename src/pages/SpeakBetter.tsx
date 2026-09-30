@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
-import WakingUpLoader from '@/components/WakingUpLoader';
 
 const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
 
@@ -187,7 +186,12 @@ const SpeakBetter = () => {
 
   return (
     <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 overflow-x-hidden">
-      {isWakingUp && <WakingUpLoader message={wakingUpMessage} />}
+      {isWakingUp && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 text-indigo-200">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-indigo-500/30 border-t-indigo-500"></div>
+          <span className="mt-3 text-xs font-code">{wakingUpMessage || "Loading..."}</span>
+        </div>
+      )}
       {/* Dynamic Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-indigo-600/10 blur-[150px] rounded-full" />
