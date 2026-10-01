@@ -345,8 +345,8 @@ const Wakeup: React.FC = () => {
             aria-live="polite"
             className={`group inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 rounded-xl font-code font-semibold text-sm tracking-wider shadow-lg active:scale-95 transition-all ${
               isReady
-                ? "bg-blue-600 text-white hover:bg-blue-500"
-                : "bg-slate-800 text-white hover:bg-slate-700"
+                ? "bg-[#2FBF71] text-black hover:bg-[#26a862]"
+                : "bg-orange-500 text-white hover:bg-orange-400"
             }`}
           >
             {isWarmingUp && (
