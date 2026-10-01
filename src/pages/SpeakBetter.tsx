@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
-const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
+const API_BASE_URL = '/api/speakbetter';
 
 const SpeakBetter = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));

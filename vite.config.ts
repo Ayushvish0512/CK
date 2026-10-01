@@ -12,6 +12,11 @@ export default defineConfig(() => ({
          target: 'https://weather-project-k72v.onrender.com',
          changeOrigin: true,
          rewrite: (path) => path.replace(/^\/api\/weather/, '')
+      },
+      '/api/speakbetter': {
+         target: 'https://speakbetter-lgfr.onrender.com',
+         changeOrigin: true,
+         rewrite: (path) => path.replace(/^\/api\/speakbetter/, '')
       }
     }
   },

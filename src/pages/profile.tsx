@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 
-const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
+const API_BASE_URL = '/api/speakbetter';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
@@ -86,7 +86,7 @@ const Profile: React.FC = () => {
 
     return (
         <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20">
-            {/* Background Glows */}}
+            {/* Background Glows */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full" />
                 <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-500/10 blur-[120px] rounded-full" />

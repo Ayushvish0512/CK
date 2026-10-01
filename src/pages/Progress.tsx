@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link, useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
+const API_BASE_URL = '/api/speakbetter';
 
 const Progress = () => {
   const [token] = useState(localStorage.getItem('token'));

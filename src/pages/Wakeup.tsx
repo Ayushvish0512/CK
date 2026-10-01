@@ -36,7 +36,7 @@ const WAKEUP_CONFIG: Record<string, WakeupConfig> = {
     appName: "SpeakBetter",
     title: "Render Server Wake-Up",
     description: "SpeakBetter backend · FastAPI · Gemini 2.5 Flash · MongoDB Atlas (Render free tier)",
-    healthEndpoint: "https://speakbetter-lgfr.onrender.com/ping",
+    healthEndpoint: "/api/speakbetter/ping",
     launchUrl: "/speakbetter",
     challenges: [
       { title: "Cold Start Latency", description: "Container spin-up blocks the first request (40–80s)." },
@@ -106,7 +106,7 @@ const Wakeup: React.FC = () => {
     return mins + ":" + secs + "s";
   };
 
-  const countdownLabel = (remainingSec % 1 === 0 ? "Next ping in " + Math.max(0, remainingSec) + "s") || "";
+  const countdownLabel = "Next ping in " + Math.max(0, remainingSec) + "s";
   const telemetry: WakeupMetric[] = [
     { label: "Server Status", value: statusLabel },
     { label: "Time Elapsed", value: formatElapsed(elapsedMs) },
