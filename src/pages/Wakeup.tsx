@@ -66,8 +66,9 @@ const WAKEUP_CONFIG: Record<string, WakeupConfig> = {
 const INITIAL_INTERVAL_MS = 10000; // ping every 10s
 const FAST_INTERVAL_MS = 5000; // after 50s of waiting, ping every 5s
 const FAST_INTERVAL_AT_MS = 50000; // 50 second threshold for fast polling
-const REQUEST_TIMEOUT_MS = 8000; // per-ping timeout
-const ESTIMATED_WAKE_MS = 80000; // progress ramps 4% -> 95% across ~80s
+const REQUEST_TIMEOUT_MS = 8000; // per-ping timeout (steady polling)
+const FIRST_PING_TIMEOUT_MS = 2000; // first ping: detect a warm server within ~2s
+const ESTIMATED_WAKE_MS = 80000; // progress ramps 0% -> 95% across ~80s
 
 type Phase = "idle" | "waking" | "ready";
 
@@ -122,13 +123,14 @@ const Wakeup: React.FC = () => {
   ];
 
   // ---- real health check ---------------------------------------------
-  const pingServer = async () => {
+  const pingServer = async (opts?: { timeoutMs?: number; reportError?: boolean }) => {
     if (phaseRef.current !== "waking" || inFlightRef.current) return;
     inFlightRef.current = true;
     setStatusLabel("PINGING SERVER");
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const reportError = opts?.reportError ?? true;
+    const timeout = setTimeout(() => controller.abort(), opts?.timeoutMs ?? REQUEST_TIMEOUT_MS);
     const t0 = performance.now();
 
     try {
@@ -137,14 +139,13 @@ const Wakeup: React.FC = () => {
       setLastPingMs(rt);
       if (res.ok) {
         onServerReady(rt);
-      } else {
-        // non-200: instance still cold-starting
+      } else if (reportError) {
         setErrorMsg("Server is taking longer than expected. Try again.");
       }
     } catch {
       const rt = Math.round(performance.now() - t0);
       if (rt > 0) setLastPingMs(rt);
-      setErrorMsg("Server is taking longer than expected. Try again.");
+      if (reportError) setErrorMsg("Server is taking longer than expected. Try again.");
     } finally {
       clearTimeout(timeout);
       inFlightRef.current = false;
@@ -166,7 +167,7 @@ const Wakeup: React.FC = () => {
   const startWaking = () => {
     if (phase === "waking" || phase === "ready") return;
     setPhase("waking");
-    setProgress(4);
+    setProgress(0);
     setStatusLabel("WAKING SERVER");
     setElapsedMs(0);
     setRemainingSec(INITIAL_INTERVAL_MS / 1000);
@@ -174,9 +175,12 @@ const Wakeup: React.FC = () => {
     setErrorMsg("");
     startTsRef.current = Date.now();
     intervalMsRef.current = INITIAL_INTERVAL_MS;
+    phaseRef.current = "waking";
 
-    // immediate first health check
-    pingServer();
+    // immediate first health check (within ~2s). A warm Render instance answers in
+    // <3ms and skips the waiting ramp entirely; a cold instance fails fast and falls
+    // through to the 10s -> 5s polling loop below.
+    pingServer({ timeoutMs: FIRST_PING_TIMEOUT_MS, reportError: false });
 
     // single loop drives elapsed timer, progress ramp, interval switch, countdown
     loopTimerRef.current = setInterval(() => {
@@ -184,9 +188,9 @@ const Wakeup: React.FC = () => {
 
       const elapsed = Date.now() - (startTsRef.current || Date.now());
       setElapsedMs(elapsed);
-      // ramp capsule bar 4% -> 95% across the estimated wake window
+      // ramp capsule bar 0% -> 95% across the estimated wake window
       const frac = Math.min(1, elapsed / ESTIMATED_WAKE_MS);
-      setProgress(Math.round(4 + frac * 91));
+      setProgress(Math.round(frac * 95));
 
       // after 50s of no success, tighten polling to every 5s
       if (intervalMsRef.current === INITIAL_INTERVAL_MS && elapsed >= FAST_INTERVAL_AT_MS) {
@@ -210,7 +214,7 @@ const Wakeup: React.FC = () => {
     clearInterval(loopTimerRef.current);
     inFlightRef.current = false;
     setPhase("idle");
-    setProgress(4);
+    setProgress(0);
     setStatusLabel("SLEEPING");
     setElapsedMs(0);
     setRemainingSec(INITIAL_INTERVAL_MS / 1000);
@@ -254,10 +258,10 @@ const Wakeup: React.FC = () => {
       <style data-purpose="wake-styling">
         {`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f5f4f0; color: #0f0f10; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #e2e8f0; -webkit-font-smoothing: antialiased; }
         .font-code { font-family: 'Space Mono', monospace; }
-        .capsule-track { border: 1.8px solid #000000; border-radius: 9999px; height: 22px; background: #ffffff; padding: 2.5px; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.04); position: relative; overflow: hidden; }
-        .capsule-fill { background-color: #000000; height: 100%; border-radius: 9999px; min-width: 14px; transition: width 140ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .capsule-track { border: 1.8px solid #334155; border-radius: 9999px; height: 22px; background: #0f172a; padding: 2.5px; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+        .capsule-fill { background-color: #38bdf8; height: 100%; border-radius: 9999px; min-width: 14px; transition: width 140ms cubic-bezier(0.4, 0, 0.2, 1); }
         .pulse-dot { animation: blink 1.2s infinite ease-in-out; }
         @keyframes blink { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.9); } }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -265,9 +269,9 @@ const Wakeup: React.FC = () => {
       </style>
 
       {/* BEGIN: PersistentTopLoadingHeader */}
-      <header className="sticky top-0 z-50 bg-[#f5f4f0]/95 backdrop-blur-md border-b border-[#d8d5cd]/80 px-4 py-3 sm:py-4 transition-all" data-purpose="sticky-loading-bar">
+      <header className="sticky top-0 z-50 bg-[#030712]/95 backdrop-blur-md border-b border-slate-700/80 px-4 py-3 sm:py-4 transition-all" data-purpose="sticky-loading-bar">
         <div className="max-w-4xl mx-auto w-full">
-          <div className="flex justify-between items-baseline mb-1.5 text-black font-code text-sm tracking-wider">
+          <div className="flex justify-between items-baseline mb-1.5 text-white font-code text-sm tracking-wider">
             <span className="font-normal select-none" id="wake-label">
               {phase === "idle" ? "idle" : phase === "ready" ? "ready" : "waking the server"}
             </span>
@@ -290,42 +294,42 @@ const Wakeup: React.FC = () => {
       {/* BEGIN: MainContent */}
       <main className="flex-grow max-w-4xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12">
         {/* Header identity block */}
-        <div className="border-b border-[#d8d5cd] pb-6 mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4" data-purpose="profile-heading">
+        <div className="border-b border-slate-700 pb-6 mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4" data-purpose="profile-heading">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-black text-white text-xs font-code font-medium mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-800 text-cyan-300 text-xs font-code font-medium mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-dot"></span>
               SYS.RUN // VER: 2.4.0
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0f0f10]">{config.title}</h1>
-            <p className="text-[#5c5e62] text-base sm:text-lg mt-1 font-normal">{config.appName} · {config.description}</p>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">{config.title}</h1>
+            <p className="text-slate-400 text-base sm:text-lg mt-1 font-normal">{config.appName} · {config.description}</p>
           </div>
           {/* Live telemetry badge */}
-          <div className="text-left sm:text-right font-code text-xs text-[#5c5e62] space-y-0.5 bg-[#eceae4]/60 p-3 rounded-lg border border-[#d8d5cd]">
-            <div>SERVER STATUS: <span className="text-black font-bold" id="pipeline-status">{statusLabel}</span></div>
-            <div>TIME ELAPSED: <span className="text-black" id="time-elapsed">{formatElapsed(elapsedMs)}</span></div>
-            <div>LAST PING: <span className="text-black" id="last-ping">{lastPingMs == null ? "— ms" : lastPingMs + " ms"}</span></div>
-            <div>NEXT PING IN: <span className="text-black font-bold" id="next-ping">{phase === "idle" ? "—" : countdownLabel}</span></div>
+          <div className="text-left sm:text-right font-code text-xs text-slate-400 space-y-0.5 bg-slate-800 p-3 rounded-lg border border-slate-700">
+            <div>SERVER STATUS: <span className="text-white font-bold" id="pipeline-status">{statusLabel}</span></div>
+            <div>TIME ELAPSED: <span className="text-white" id="time-elapsed">{formatElapsed(elapsedMs)}</span></div>
+            <div>LAST PING: <span className="text-white" id="last-ping">{lastPingMs == null ? "— ms" : lastPingMs + " ms"}</span></div>
+            <div>NEXT PING IN: <span className="text-white font-bold" id="next-ping">{phase === "idle" ? "—" : countdownLabel}</span></div>
           </div>
         </div>
 
         {/* App Overview & Challenges Section */}
-        <div className="mb-8 p-4 bg-white/70 border border-[#d8d5cd] rounded-xl backdrop-blur-sm shadow-sm" data-purpose="app-overview">
+        <div className="mb-8 p-4 bg-slate-900/40 border border-slate-700 rounded-xl backdrop-blur-sm shadow-sm" data-purpose="app-overview">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
             <div>
-              <span className="font-code text-xs uppercase tracking-wider text-[#5c5e62] block">What this does</span>
-              <p className="text-xs text-[#0f0f10]/80 mt-0.5">Pings the live Render health endpoint until the cold instance reports ready, then launches {config.appName}.</p>
+              <span className="font-code text-xs uppercase tracking-wider text-slate-400 block">What this does</span>
+              <p className="text-xs text-white/80 mt-0.5">Pings the live Render health endpoint until the cold instance reports ready, then launches {config.appName}.</p>
             </div>
-            <span className="font-code text-[10px] uppercase tracking-wider text-[#5c5e62] bg-neutral-100 border border-neutral-200 rounded-full px-2 py-0.5">Free Tier</span>
+            <span className="font-code text-[10px] uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-400/30 rounded-full px-2 py-0.5">Free Tier</span>
           </div>
-          <p className="text-sm text-[#5c5e62] leading-relaxed mb-4">
+          <p className="text-sm text-slate-400 leading-relaxed mb-4">
             Free-tier servers may take 40–80 seconds to wake up and start the app. While it boots, no data is requested —
             once a <code className="font-code">200 OK</code> is received the Launch button activates automatically.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#5c5e62]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-400">
             {config.challenges.map((c) => (
               <div key={c.title} className="flex gap-2">
-                <span className="font-code text-black">•</span>
-                <span><strong className="text-ink-dark">{c.title}</strong> — {c.description}</span>
+                <span className="font-code text-white">•</span>
+                <span><strong className="text-white">{c.title}</strong> — {c.description}</span>
               </div>
             ))}
           </div>
@@ -341,8 +345,8 @@ const Wakeup: React.FC = () => {
             aria-live="polite"
             className={`group inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 rounded-xl font-code font-semibold text-sm tracking-wider shadow-lg active:scale-95 transition-all ${
               isReady
-                ? "bg-emerald-700 text-white hover:bg-emerald-800"
-                : "bg-black text-white hover:bg-neutral-800"
+                ? "bg-blue-600 text-white hover:bg-blue-500"
+                : "bg-slate-800 text-white hover:bg-slate-700"
             }`}
           >
             {isWarmingUp && (
@@ -359,13 +363,13 @@ const Wakeup: React.FC = () => {
                 </svg>
                 <span className="flex items-center gap-2">
                   <span>Waking render server…</span>
-                  <span className="text-neutral-300" id="main-cta-countdown">{countdownLabel || " —"}</span>
+                  <span className="text-slate-500" id="main-cta-countdown">{countdownLabel || " —"}</span>
                 </span>
               </>
             )}
             {!isWarmingUp && !isReady && (
               <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-dot"></span>
                 <span>Start Render Server — Free Tier</span>
               </span>
             )}
@@ -375,7 +379,7 @@ const Wakeup: React.FC = () => {
               </span>
             )}
           </button>
-          <p className="font-code text-xs text-[#5c5e62] mt-2" id="cta-sub">
+          <p className="font-code text-xs text-slate-400 mt-2" id="cta-sub">
             {isReady
               ? "Health check passed (200 OK). The server is accepting traffic."
               : "Free-tier servers may take 40–80 seconds to wake up and start the app."}
@@ -383,7 +387,7 @@ const Wakeup: React.FC = () => {
           {errorMsg && (
             <div
               id="error-box"
-              className="mt-3 p-3 bg-white/80 border border-red-300 text-red-800 rounded-xl font-code text-xs cursor-pointer"
+              className="mt-3 p-3 bg-red-950/30 border border-red-500/40 text-red-300 rounded-xl font-code text-xs cursor-pointer"
               role="status"
               onClick={resetWaking}
               aria-label="Reset and try waking the server again"
@@ -396,18 +400,18 @@ const Wakeup: React.FC = () => {
         {/* Live Telemetry Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2" data-purpose="metrics-grid">
           {telemetry.map((m) => (
-            <div key={m.label} className="bg-white border border-[#d8d5cd] p-3.5 rounded-xl shadow-xs">
-              <span className="font-code text-[11px] text-[#5c5e62] block uppercase">{m.label}</span>
-              <span className="text-base font-bold font-code text-black mt-1 block">{m.value}</span>
+            <div key={m.label} className="bg-slate-900/40 border border-slate-700 p-3.5 rounded-xl shadow-xs">
+              <span className="font-code text-[11px] text-slate-400 block uppercase">{m.label}</span>
+              <span className="text-sm sm:text-base font-bold font-code text-white mt-1 block">{m.value}</span>
             </div>
           ))}
         </div>
 
         {/* Live Pipeline Task Checklist (wake-up stages) */}
-        <div className="bg-white border border-[#d8d5cd] rounded-xl divide-y divide-[#d8d5cd] shadow-sm overflow-hidden mt-6" data-purpose="pipeline-task-list">
+        <div className="bg-slate-900/40 border border-slate-700 rounded-xl divide-y divide-slate-700 shadow-sm overflow-hidden mt-6" data-purpose="pipeline-task-list">
           {pipelineStages.map((s, i) => {
             const labels = ["PENDING", "WAITING", "SYNCING", "QUEUED"];
-            const colors = ["bg-neutral-100 text-neutral-500 font-medium border-neutral-200", "bg-black text-white font-semibold", "bg-neutral-100 text-neutral-500 font-medium border-neutral-200", "bg-neutral-100 text-neutral-500 font-medium border-neutral-200"];
+            const colors = ["bg-slate-800 text-slate-400 font-medium border-slate-700", "bg-blue-600 text-white font-semibold", "bg-slate-800 text-slate-400 font-medium border-slate-700", "bg-slate-800 text-slate-400 font-medium border-slate-700"];
             let label = labels[i];
             let color = colors[i];
             if (phase === "idle") {
@@ -423,20 +427,20 @@ const Wakeup: React.FC = () => {
               color = colors[0];
             }
             return (
-              <article key={s.id} className="p-4 flex items-start justify-between gap-4 transition hover:bg-neutral-50/70">
+              <article key={s.id} className="p-4 flex items-start justify-between gap-4 transition hover:bg-slate-800/70">
                 <div className="flex items-start gap-3">
-                  <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${i === 0 ? (phase === "waking" || phase === "ready" ? "bg-black text-white" : "border-2 border-black bg-white") : i === 1 ? (phase === "waking" || phase === "ready" ? "border-2 border-black bg-white" : "border border-neutral-300 text-neutral-400") : "border border-neutral-300 text-neutral-400"}`}>
+                  <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${i === 0 ? (phase === "waking" || phase === "ready" ? "bg-blue-500 text-white" : "border-2 border-blue-500 bg-slate-900/40") : i === 1 ? (phase === "waking" || phase === "ready" ? "border-2 border-blue-500 bg-slate-900/40" : "border border-slate-600 text-slate-500") : "border border-slate-600 text-slate-500"}`}>
                     {phase === "ready" && i < 4 ? (
-                      <span className="h-2 w-2 rounded-full bg-black"></span>
+                      <span className="h-2 w-2 rounded-full bg-blue-500"></span>
                     ) : phase === "waking" && i === 0 ? (
                       "✓"
                     ) : phase === "waking" && i === 1 ? (
-                      <span className="h-2 w-2 rounded-full bg-black pulse-dot"></span>
+                      <span className="h-2 w-2 rounded-full bg-cyan-400 pulse-dot"></span>
                     ) : i + 1}
                   </span>
                   <div>
-                    <h3 className={`text-sm font-semibold leading-tight ${phase === "ready" || (phase === "waking" && i <= 1) ? "text-black" : "text-neutral-700"}`}>{s.title}</h3>
-                    <p className="text-xs text-[#5c5e62] mt-1">{s.description}</p>
+                    <h3 className={`text-sm font-semibold leading-tight ${phase === "ready" || (phase === "waking" && i <= 1) ? "text-white" : "text-slate-400"}`}>{s.title}</h3>
+                    <p className="text-xs text-slate-400 mt-1">{s.description}</p>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
@@ -449,14 +453,14 @@ const Wakeup: React.FC = () => {
       </main>
 
       {/* BEGIN: MinimalFooter */}
-      <footer className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 border-t border-[#d8d5cd] text-xs text-[#5c5e62] flex flex-col sm:flex-row items-center justify-between gap-3 font-code" data-purpose="page-footer">
+      <footer className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 border-t border-slate-700 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3 font-code" data-purpose="page-footer">
         <div>
           SpeakBetter // <span id="current-year">{new Date().getFullYear()}</span> · Health Monitor v2.4.0
         </div>
         <div className="flex items-center gap-4">
-          <a className="hover:text-black transition-colors" href="https://github.com/Ayushvish0512/speakbetter" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
-          <span className="text-neutral-300">/</span>
-          <span className="text-ink-dark font-bold" id="footer-status">{statusLabel}</span>
+          <a className="hover:text-white transition-colors" href="https://github.com/Ayushvish0512/speakbetter" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+          <span className="text-slate-500">/</span>
+          <span className="text-white font-bold" id="footer-status">{statusLabel}</span>
         </div>
       </footer>
     </>
