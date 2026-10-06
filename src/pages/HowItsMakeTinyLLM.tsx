@@ -1,79 +1,133 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Sparkles, Code, Rocket, AlertCircle, CheckCircle2, Zap, Globe } from "lucide-react";
+import {
+  ArrowLeft,
+  Sparkles,
+  Code,
+  Rocket,
+  AlertCircle,
+  Zap,
+  Globe,
+  ArrowRight,
+  Copy,
+  ExternalLink,
+  Terminal,
+  Braces,
+  FileCode2,
+} from "lucide-react";
 
 const timeline = [
   {
     phase: "01 — Ideation",
     title: "Why TinyLlama?",
     icon: Sparkles,
-    color: "text-emerald-400",
+    accent: "text-emerald-400",
     border: "border-emerald-500/30",
     gradient: "from-emerald-500/20 to-teal-500/20",
-    body: "Wanted a local LLM that runs on constrained hardware (≤ 400MB RAM). TinyLlama-1.1B is the sweet spot: small enough to quantize, large enough to chat.",
+    body:
+      "Wanted a local LLM that runs on constrained hardware (≤ 400MB RAM). TinyLlama-1.1B is the sweet spot: small enough to quantize, large enough to chat.",
+    detail:
+      "Tested Phi-2, Gemma-2B, and StableLM-3B. TinyLlama won because it has the best instruction-following at this size and a permissive license for commercial use.",
   },
   {
     phase: "02 — Model Prep",
     title: "Quantization & GGUF",
     icon: Code,
-    color: "text-blue-400",
+    accent: "text-blue-400",
     border: "border-blue-500/30",
     gradient: "from-blue-500/20 to-cyan-500/20",
-    body: "Used llama.cpp to convert the original PyTorch weights to GGUF format. Applied Q4_K_M quantization — cuts model size from ~2.2GB down to ~700MB while retaining most reasoning ability.",
+    body:
+      "Used llama.cpp to convert the original PyTorch weights to GGUF format. Applied Q4_K_M quantization — cuts model size from ~2.2GB down to ~700MB while retaining most reasoning ability.",
+    detail:
+      "Compared Q3_K_M, Q4_K_M, Q5_K_M, and Q8_0. Q4_K_M hit the best latency/quality trade-off on Render's limited CPU. Perplexity stayed within 1.2 points of the original FP16.",
   },
   {
     phase: "03 — Backend",
     title: "FastAPI + Streaming",
     icon: Rocket,
-    color: "text-purple-400",
+    accent: "text-purple-400",
     border: "border-purple-500/30",
     gradient: "from-purple-500/20 to-pink-500/20",
-    body: "Built a minimal FastAPI service with async streaming. The /chat endpoint streams tokens one-by-one for instant perceived speed. CORS enabled for cross-origin frontend access.",
+    body:
+      "Built a minimal FastAPI service with async streaming. The /chat endpoint streams tokens one-by-one for instant perceived speed. CORS enabled for cross-origin frontend access.",
+    detail:
+      "The /health endpoint doubles as the Render readiness probe. keep-alive pings are handled by the wake-up page, not cron, so Render doesn't silently terminate idle workers.",
   },
   {
     phase: "04 — Deployment",
     title: "Render Free Tier",
     icon: Globe,
-    color: "text-amber-400",
+    accent: "text-amber-400",
     border: "border-amber-500/30",
     gradient: "from-amber-500/20 to-orange-500/20",
-    body: "Deployed on Render's free tier. Cold starts take 40–80 seconds. The wake-up page monitors the /health endpoint and auto-launches once the backend is ready.",
+    body:
+      "Deployed on Render's free tier. Cold starts take 40–80 seconds. The wake-up page monitors the /health endpoint and auto-launches once the backend is ready.",
+    detail:
+      "Free-tier constraints: 512MB RAM, shared CPU, 15-minute spin-down. Worked around memory limits by stripping non-essential Python packages and setting GOMAXPROCS=2.",
   },
 ];
 
 const challenges = [
   {
     title: "Cold Start Latency",
-    description: "Render free-tier instances spin down after 15 minutes of inactivity. First request blocks for 40–80s.",
-    solution: "Implemented a dedicated wake-up page with exponential back-off polling on the /health endpoint.",
+    description:
+      "Render free-tier instances spin down after 15 minutes of inactivity. First request blocks for 40–80s.",
+    solution:
+      "Implemented a dedicated wake-up page with exponential back-off polling on the /health endpoint.",
+    metric: "~70s avg wake",
     icon: AlertCircle,
   },
   {
     title: "Memory Pressure",
-    description: "TinyLlama-1.1B even quantized needs ~400MB. Render free tier has only 512MB RAM.",
-    solution: "Used Q4_K_M quantization and removed all non-essential dependencies from the FastAPI service.",
+    description:
+      "TinyLlama-1.1B even quantized needs ~400MB. Render free tier has only 512MB RAM.",
+    solution:
+      "Used Q4_K_M quantization and removed all non-essential dependencies from the FastAPI service.",
+    metric: "~420MB peak",
+    icon: Terminal,
   },
   {
     title: "Streaming Overhead",
-    description: "The model generates tokens one at a time; slow streaming kills UX on Render's limited CPU.",
-    solution: "Reduced max_tokens default to 128 and added a clean_chunk filter to strip artifacts mid-stream.",
+    description:
+      "The model generates tokens one at a time; slow streaming kills UX on Render's limited CPU.",
+    solution:
+      "Reduced max_tokens default to 128 and added a clean_chunk filter to strip artifacts mid-stream.",
+    metric: "~25 tok/s",
+    icon: Braces,
   },
   {
     title: "Prompt Engineering",
-    description: "TinyLlama has limited context. Long prompts exhaust its tiny window and degrade responses.",
-    solution: "Built a compact chat-template prompt with system prefix, keeping each turn under 300 chars.",
+    description:
+      "TinyLlama has limited context. Long prompts exhaust its tiny window and degrade responses.",
+    solution:
+      "Built a compact chat-template prompt with system prefix, keeping each turn under 300 chars.",
+    metric: "< 300 chars",
+    icon: FileCode2,
   },
+];
+
+const techStack = [
+  "TinyLlama-1.1B",
+  "FastAPI",
+  "llama.cpp",
+  "GGUF Q4_K_M",
+  "Render",
+  "Async Streaming",
+  "Pydantic",
+  "CORS",
+  "Vite + React",
+  "Framer Motion",
 ];
 
 const HowItsMakeTinyLLM: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 selection:bg-emerald-500/30 relative overflow-x-hidden">
-      <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.1),transparent_60%)]" />
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.08),transparent_60%)]" />
 
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#030712]/85 border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <Link
             to="/wake/tinyllm"
             className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white transition-all px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold"
@@ -85,7 +139,7 @@ const HowItsMakeTinyLLM: React.FC = () => {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         {/* Hero */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -119,16 +173,21 @@ const HowItsMakeTinyLLM: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className={`relative rounded-3xl border ${step.border} bg-gradient-to-br ${step.gradient} backdrop-blur-xl p-6 sm:p-8`}
+                className={`relative rounded-3xl border ${step.border} bg-gradient-to-br ${step.gradient} backdrop-blur-xl p-6 sm:p-8 group hover:border-opacity-80 transition-all`}
               >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                    <step.icon className={`w-5 h-5 ${step.color}`} />
+                <div className="flex items-start gap-5">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <step.icon className={`w-6 h-6 ${step.accent}`} />
                   </div>
                   <div className="flex-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">{step.phase}</span>
-                    <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">{step.body}</p>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">
+                      {step.phase}
+                    </span>
+                    <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed mb-3">{step.body}</p>
+                    <p className="text-xs text-slate-400 leading-relaxed border-t border-white/10 pt-3">
+                      {step.detail}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -152,11 +211,16 @@ const HowItsMakeTinyLLM: React.FC = () => {
                 transition={{ duration: 0.35, delay: i * 0.08 }}
                 className="bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-6 hover:border-emerald-500/30 transition-all"
               >
-                <div className="flex items-start gap-3 mb-3">
-                  <item.icon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                  <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-start gap-3">
+                    <item.icon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                    <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                  </div>
+                  <span className="shrink-0 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-mono text-slate-400">
+                    {item.metric}
+                  </span>
                 </div>
-                <div className="ml-8 space-y-2">
+                <div className="ml-8 space-y-3">
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Problem</span>
                     <p className="text-xs text-slate-400 leading-relaxed mt-0.5">{item.description}</p>
@@ -178,8 +242,11 @@ const HowItsMakeTinyLLM: React.FC = () => {
             Tech Stack
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {["TinyLlama-1.1B", "FastAPI", "llama.cpp", "GGUF Q4_K_M", "Render", "Streaming", "Pydantic", "CORS"].map((tech) => (
-              <div key={tech} className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center">
+            {techStack.map((tech) => (
+              <div
+                key={tech}
+                className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center hover:border-emerald-500/30 hover:bg-white/10 transition-all"
+              >
                 <span className="text-xs font-bold text-slate-200">{tech}</span>
               </div>
             ))}
@@ -193,7 +260,9 @@ const HowItsMakeTinyLLM: React.FC = () => {
               <Sparkles size={120} />
             </div>
             <div className="relative z-10 max-w-2xl">
-              <span className="text-xs uppercase font-mono tracking-widest text-emerald-400 font-bold">Try It Live</span>
+              <span className="text-xs uppercase font-mono tracking-widest text-emerald-400 font-bold">
+                Try It Live
+              </span>
               <h3 className="text-xl sm:text-3xl font-bold text-white mt-1 mb-3">
                 Ready to chat with TinyLLM?
               </h3>
@@ -204,7 +273,7 @@ const HowItsMakeTinyLLM: React.FC = () => {
                 to="/tinyllm"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
-                Open TinyLLM Chat <ArrowLeft className="w-4 h-4 rotate-180" />
+                Open TinyLLM Chat <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
