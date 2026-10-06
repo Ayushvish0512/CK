@@ -71,7 +71,8 @@ const projects = [
       why: "To demonstrate the feasibility of running powerful language models on extremely constrained hardware (≤ 400 MB RAM) without internet dependency.",
       what: "A high-speed FastAPI service serving a quantized TinyLlama-1.1B model for private, offline chat capabilities.",
       whom: "Developers and privacy enthusiasts needing a local, low-resource AI backend for embedded or secure applications."
-    }
+    },
+    link: "/wake/tinyllm"
   },
   {
     title: "Weather Prediction ML",

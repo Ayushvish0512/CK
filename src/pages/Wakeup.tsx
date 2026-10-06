@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 interface Challenge {
   title: string;
@@ -56,6 +56,19 @@ const WAKEUP_CONFIG: Record<string, WakeupConfig> = {
       { title: "Model Loading", description: "Scikit-learn model deserializes on first request." },
       { title: "Cache Warm-Up", description: "Forecast cache must repopulate on boot." },
       { title: "Concurrency", description: "Worker pre-loading before serving traffic." },
+    ],
+  },
+  tinyllm: {
+    appName: "TinyLLM",
+    title: "Render Server Wake-Up",
+    description: "TinyLlama-1.1B Local LLM · FastAPI · Quantized GGUF (Render free tier)",
+    healthEndpoint: "https://tinny-llm-latest.onrender.com/health",
+    launchUrl: "/tinyllm",
+    challenges: [
+      { title: "Cold Start Latency", description: "Container spin-up blocks the first request (40–80s)." },
+      { title: "Model Loading", description: "GGUF quantized model must load into memory on boot." },
+      { title: "Memory Pressure", description: "TinyLlama-1.1B fits in ~400MB but Render free tier is memory-constrained." },
+      { title: "Streaming Overhead", description: "Token-by-token streaming must start within the first request window." },
     ],
   },
 };
@@ -394,6 +407,14 @@ const Wakeup: React.FC = () => {
             >
               {errorMsg}
             </div>
+          )}
+          {config.appName === "TinyLLM" && (
+            <Link
+              to="/how-its-make-tiny-llm"
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition-all text-xs font-bold font-code"
+            >
+              How It's Made — TinyLLM
+            </Link>
           )}
         </section>
 
