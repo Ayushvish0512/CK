@@ -7,10 +7,13 @@ import Home from "./pages/Home";
 import NotFound from "./pages/404";
 import Index from "./pages/Index";
 import Profile from "./pages/profile";
-import Chat from "./pages/Chat";
 import SpeakBetter from "./pages/SpeakBetter";
 import Progress from "./pages/Progress";
 import Weather from "./pages/Weather";
+import Wakeup from "./pages/Wakeup";
+import AboutMe from "./pages/AboutMe";
+import TinyLLM from "./pages/TinyLLM";
+import HowItsMakeTinyLLM from "./pages/HowItsMakeTinyLLM";
 
 const queryClient = new QueryClient();
 
@@ -23,11 +26,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/picktime" element={<Index />} />
-          <Route path="/profile" element={<Profile />} />
-           <Route path="/chat" element={<Chat />} />
-          <Route path="/speakbetter" element={<SpeakBetter />} />
+           <Route path="/profile" element={<Profile />} />
+           <Route path="/speakbetter" element={<SpeakBetter />} />
           <Route path="/progress" element={<Progress />} />
-          <Route path="/weather" element={<Weather />} />
+           <Route path="/weather" element={<Weather />} />
+           <Route path="/wake/:appId" element={<Wakeup />} />
+           <Route path="/tinyllm" element={<TinyLLM />} />
+           <Route path="/how-its-make-tiny-llm" element={<HowItsMakeTinyLLM />} />
+           <Route path="/aboutme" element={<AboutMe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

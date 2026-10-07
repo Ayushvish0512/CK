@@ -3,23 +3,25 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, Calendar, Target, Award, Sparkles, Filter, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import WakingUpLoader from '@/components/WakingUpLoader';
 
-const API_BASE_URL = 'https://speakbetter-lgfr.onrender.com';
+const API_BASE_URL = '/api/speakbetter';
 
 const Progress = () => {
   const [token] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
   const [history, setHistory] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [isWakingUp, setIsWakingUp] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      loadData();
+    if (!token) {
+      navigate('/speakbetter');
+      return;
     }
-  }, [token]);
+    loadData();
+  }, [token, navigate]);
 
   const loadData = async () => {
     setIsWakingUp(true);
@@ -48,7 +50,11 @@ const Progress = () => {
 
   return (
     <div className="dark min-h-screen bg-slate-950 text-slate-50 selection:bg-indigo-500/30 pb-20 overflow-x-hidden">
-      {isWakingUp && <WakingUpLoader message="Fetching progress data" />}
+      {isWakingUp && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-indigo-500/30 border-t-indigo-500"></div>
+        </div>
+      )}
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-500/5 blur-[120px] rounded-full" />

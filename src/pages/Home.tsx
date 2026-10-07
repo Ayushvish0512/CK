@@ -32,7 +32,7 @@ const projects = [
       what: "A multimodal AI coach using Gemini 1.5/2.0 that provides real-time corrections, native-audio imprinting (shadowing), and contextual Hindi explanations.",
       whom: "Hindi-speaking ESL learners looking to build speaking confidence and fluency through daily active practice."
     },
-    link: "/speakbetter"
+    link: "/wake/speakbetter"
   },
   {
     title: "Wellness AI",
@@ -63,15 +63,16 @@ const projects = [
   {
     title: "Text AI",
     icon: <MessageSquareText className="w-8 h-8 text-emerald-400" />,
-    description: "Lightweight Local LLM API (TinyLlama).",
+    description: "Lightweight Local LLM API (Qwen1.5).",
     status: "Completed",
     color: "from-emerald-500/20 to-teal-500/20",
     border: "border-emerald-500/30",
     threeWs: {
       why: "To demonstrate the feasibility of running powerful language models on extremely constrained hardware (≤ 400 MB RAM) without internet dependency.",
-      what: "A high-speed FastAPI service serving a quantized TinyLlama-1.1B model for private, offline chat capabilities.",
+      what: "A high-speed FastAPI service serving a quantized Qwen1.5-0.5B model for private, offline chat capabilities.",
       whom: "Developers and privacy enthusiasts needing a local, low-resource AI backend for embedded or secure applications."
-    }
+    },
+    link: "/wake/tinyllm"
   },
   {
     title: "Weather Prediction ML",
@@ -85,7 +86,7 @@ const projects = [
       what: "An end-to-end ML pipeline that collects historical data via OpenWeather API, trains a Scikit-learn model, and serves predictions via FastAPI.",
       whom: "Local businesses or developers needing precise, API-driven temperature forecasts for logistical or operational planning."
     },
-    link: "/weather"
+    link: "/wake/weather"
   }
 ];
 
@@ -120,6 +121,12 @@ const Home: React.FC = () => {
               >
                 View Projects <ArrowRight className="w-4 h-4" />
               </a>
+              <Link
+                to="/aboutme"
+                className="px-8 py-3 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-medium transition-all border border-slate-700 flex items-center gap-2"
+              >
+                About Me <ArrowRight className="w-4 h-4" />
+              </Link>
               <a
                 href="mailto:ayushvishwakarma0512@gmail.com"
                 className="px-8 py-3 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-medium transition-all border border-slate-700 flex items-center gap-2"
