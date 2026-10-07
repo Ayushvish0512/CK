@@ -14,6 +14,8 @@ import {
   ExternalLink,
   Terminal,
   Braces,
+  Cpu,
+  RefreshCw,
   FileCode2,
 } from "lucide-react";
 
@@ -94,7 +96,7 @@ const challenges = [
     solution:
       "Added cmake + make compilation step in start.sh and pinned llama-cpp-python in requirements.txt.",
     metric: "BLOCKER",
-    icon: Brace,
+    icon: Braces,
   },
   {
     title: "Model Path Mismatch",
