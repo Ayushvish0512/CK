@@ -20,15 +20,15 @@ import {
 const timeline = [
   {
     phase: "01 — Ideation",
-    title: "Why TinyLlama?",
+    title: "Why Qwen1.5-0.5B?",
     icon: Sparkles,
     accent: "text-emerald-400",
     border: "border-emerald-500/30",
     gradient: "from-emerald-500/20 to-teal-500/20",
     body:
-      "Wanted a local LLM that runs on constrained hardware (≤ 400MB RAM). TinyLlama-1.1B is the sweet spot: small enough to quantize, large enough to chat.",
+      "Wanted a local LLM that runs on constrained hardware (≤ 400MB RAM). Qwen1.5-0.5B is the sweet spot: small enough to fit in memory, large enough to chat.",
     detail:
-      "Tested Phi-2, Gemma-2B, and StableLM-3B. TinyLlama won because it has the best instruction-following at this size and a permissive license for commercial use.",
+      "Tested Phi-2, Gemma-2B, TinyLlama-1.1B, and Qwen1.5-0.5B. Qwen1.5 won because it has the best instruction-following at this size and a permissive license for commercial use. Model file: qwen1.5-0.5b-chat-q2_k.gguf.",
   },
   {
     phase: "02 — Model Prep",
@@ -74,41 +74,113 @@ const challenges = [
     description:
       "Render free-tier instances spin down after 15 minutes of inactivity. First request blocks for 40–80s.",
     solution:
-      "Implemented a dedicated wake-up page with exponential back-off polling on the /health endpoint.",
+      "Implemented a dedicated wake-up page with polling on the /health endpoint.",
     metric: "~70s avg wake",
     icon: AlertCircle,
   },
   {
     title: "Memory Pressure",
     description:
-      "TinyLlama-1.1B even quantized needs ~400MB. Render free tier has only 512MB RAM.",
+      "Qwen1.5-0.5B even quantized needs ~400MB. Render free tier has only 512MB RAM.",
     solution:
       "Used Q4_K_M quantization and removed all non-essential dependencies from the FastAPI service.",
     metric: "~420MB peak",
     icon: Terminal,
   },
   {
-    title: "Streaming Overhead",
+    title: "Missing Build Step",
     description:
-      "The model generates tokens one at a time; slow streaming kills UX on Render's limited CPU.",
+      "No compiled llama.cpp binary exists in the repository. Every request to /chat fails with FileNotFoundError.",
     solution:
-      "Reduced max_tokens default to 128 and added a clean_chunk filter to strip artifacts mid-stream.",
-    metric: "~25 tok/s",
-    icon: Braces,
+      "Added cmake + make compilation step in start.sh and pinned llama-cpp-python in requirements.txt.",
+    metric: "BLOCKER",
+    icon: Brace,
   },
   {
-    title: "Prompt Engineering",
+    title: "Model Path Mismatch",
     description:
-      "TinyLlama has limited context. Long prompts exhaust its tiny window and degrade responses.",
+      "main.py checks for distilgpt2-q4_k_m.gguf but model.py downloads qwen2.5-0.5b-instruct-q2_k.gguf — server never finds the model.",
     solution:
-      "Built a compact chat-template prompt with system prefix, keeping each turn under 300 chars.",
-    metric: "< 300 chars",
+      "Standardized MODEL_PATH variable across both files to point to the same GGUF file.",
+    metric: "BLOCKER",
+    icon: FileCode2,
+  },
+  {
+    title: "Zombie Subprocesses",
+    description:
+      "When a client disconnects mid-stream, the llama.cpp subprocess is never terminated — it leaks as a zombie.",
+    solution:
+      "Wrapped generator in try/finally and call proc.terminate() in the finally block.",
+    metric: "BLOCKER",
+    icon: RefreshCw,
+  },
+  {
+    title: "sys.exit(1) on Download Failure",
+    description:
+      "If DOWNLOAD_MODEL=1 and the network fails, sys.exit(1) kills the entire FastAPI server mid-request.",
+    solution:
+      "Replaced sys.exit(1) with raising RuntimeError, caught and streamed as an error message to the client.",
+    metric: "BLOCKER",
+    icon: Terminal,
+  },
+  {
+    title: "Subprocess-Per-Request",
+    description:
+      "Each request spawns a subprocess that loads ~450MB into RAM. Concurrent requests exceed 400MB and OOM.",
+    solution:
+      "Switched to llama-cpp-python in-memory model loading — model loaded once at startup.",
+    metric: "HIGH",
+    icon: Cpu,
+  },
+  {
+    title: "Streaming Correctness",
+    description:
+      "Proc.stdout is read line-by-line, blocking until newlines appear instead of token-by-token streaming.",
+    solution:
+      "Switched to llama-cpp-python native token streaming which yields each token as generated.",
+    metric: "HIGH",
+    icon: Zap,
+  },
+  {
+    title: "Wildcard CORS",
+    description:
+      "ALLOW_ORIGINS=['*'] exposes the endpoint to cross-origin exploits from any domain.",
+    solution:
+      "Restricted allow_origins to trusted frontend domains only.",
+    metric: "MEDIUM",
+    icon: Globe,
+  },
+  {
+    title: "No Input Length Limit",
+    description:
+      "No max_length on prompt field — large strings passed to subprocess exceed OS command-line limits.",
+    solution:
+      "Added Field(max_length=1000) validation to the Prompt Pydantic model.",
+    metric: "MEDIUM",
+    icon: AlertCircle,
+  },
+  {
+    title: "No Startup Fail-Fast",
+    description:
+      "Server starts successfully and returns 200 OK on /health even if the model is missing or binary is absent.",
+    solution:
+      "Added @app.on_event('startup') that checks for model file and binary, exiting immediately if missing.",
+    metric: "HIGH",
+    icon: Rocket,
+  },
+  {
+    title: "Hardcoded Relative Paths",
+    description:
+      "MODEL_PATH and LLAMA_BIN are relative paths depending on the launch directory — fragile on Render.",
+    solution:
+      "Switched to file-relative pathing using os.path.join(os.path.dirname(__file__), ...).",
+    metric: "MEDIUM",
     icon: FileCode2,
   },
 ];
 
 const techStack = [
-  "TinyLlama-1.1B",
+  "Qwen1.5-0.5B",
   "FastAPI",
   "llama.cpp",
   "GGUF Q4_K_M",
@@ -267,7 +339,7 @@ const HowItsMakeTinyLLM: React.FC = () => {
                 Ready to chat with TinyLLM?
               </h3>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Open the chat interface and start a private, offline-capable conversation with TinyLlama-1.1B running on Render.
+                Open the chat interface and start a private, offline-capable conversation with Qwen1.5-0.5B running on Render.
               </p>
               <Link
                 to="/tinyllm"

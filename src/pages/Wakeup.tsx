@@ -61,13 +61,13 @@ const WAKEUP_CONFIG: Record<string, WakeupConfig> = {
   tinyllm: {
     appName: "TinyLLM",
     title: "Render Server Wake-Up",
-    description: "TinyLlama-1.1B Local LLM · FastAPI · Quantized GGUF (Render free tier)",
+    description: "Qwen1.5-0.5B Local LLM · FastAPI · Quantized GGUF (Render free tier)",
     healthEndpoint: "https://tinny-llm-latest.onrender.com/health",
     launchUrl: "/tinyllm",
     challenges: [
       { title: "Cold Start Latency", description: "Container spin-up blocks the first request (40–80s)." },
       { title: "Model Loading", description: "GGUF quantized model must load into memory on boot." },
-      { title: "Memory Pressure", description: "TinyLlama-1.1B fits in ~400MB but Render free tier is memory-constrained." },
+      { title: "Memory Pressure", description: "Qwen1.5-0.5B fits in ~400MB but Render free tier is memory-constrained." },
       { title: "Streaming Overhead", description: "Token-by-token streaming must start within the first request window." },
     ],
   },

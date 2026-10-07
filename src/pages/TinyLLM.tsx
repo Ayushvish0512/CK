@@ -198,7 +198,7 @@ const TinyLLM: React.FC = () => {
 
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                   <Cpu className="w-3 h-3" />
-                  <span>Loading TinyLlama-1.1B Model</span>
+                  <span>Loading Qwen1.5-0.5B Model</span>
                 </div>
               </div>
             </div>
@@ -302,7 +302,7 @@ const TinyLLM: React.FC = () => {
                 </h1>
                 
                 <p className="text-base text-slate-400 max-w-lg mb-10 leading-relaxed">
-                  Running TinyLlama-1.1B locally on Render. 
+                  Running Qwen1.5-0.5B locally on Render. 
                   <span className="block mt-2 text-slate-500 text-sm">
                     Private, offline-capable AI chat — no data leaves this isolated backend.
                   </span>
@@ -352,7 +352,7 @@ const TinyLLM: React.FC = () => {
                       ) : (
                         <>
                           <Sparkles className="w-3 h-3 text-emerald-400" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">TinyLlama</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Qwen1.5</span>
                         </>
                       )}
                     </div>
@@ -419,11 +419,11 @@ const TinyLLM: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/5">
                   <Cpu className="w-3 h-3 text-slate-500" />
-                  <span className="text-[10px] text-slate-500 font-mono">TinyLlama-1.1B</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/5">
-                  <Terminal className="w-3 h-3 text-slate-500" />
-                  <span className="text-[10px] text-slate-500 font-mono">GGUF Q4_K_M</span>
+                   <span className="text-[10px] text-slate-500 font-mono">Qwen1.5-0.5B</span>
+                 </div>
+                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/5">
+                   <Terminal className="w-3 h-3 text-slate-500" />
+                   <span className="text-[10px] text-slate-500 font-mono">GGUF Q2_K</span>
                 </div>
                 {message.length > 0 && (
                   <span className="text-[10px] text-slate-600 font-mono ml-2">
@@ -455,7 +455,7 @@ const TinyLLM: React.FC = () => {
             <span>2026</span>
           </div>
           <p className="text-[10px] text-slate-700">
-            Powered by TinyLlama · Built with React & Tailwind
+            Powered by Qwen1.5 · Built with React & Tailwind
           </p>
         </div>
       </footer>

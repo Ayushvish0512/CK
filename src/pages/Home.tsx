@@ -63,13 +63,13 @@ const projects = [
   {
     title: "Text AI",
     icon: <MessageSquareText className="w-8 h-8 text-emerald-400" />,
-    description: "Lightweight Local LLM API (TinyLlama).",
+    description: "Lightweight Local LLM API (Qwen1.5).",
     status: "Completed",
     color: "from-emerald-500/20 to-teal-500/20",
     border: "border-emerald-500/30",
     threeWs: {
       why: "To demonstrate the feasibility of running powerful language models on extremely constrained hardware (≤ 400 MB RAM) without internet dependency.",
-      what: "A high-speed FastAPI service serving a quantized TinyLlama-1.1B model for private, offline chat capabilities.",
+      what: "A high-speed FastAPI service serving a quantized Qwen1.5-0.5B model for private, offline chat capabilities.",
       whom: "Developers and privacy enthusiasts needing a local, low-resource AI backend for embedded or secure applications."
     },
     link: "/wake/tinyllm"
