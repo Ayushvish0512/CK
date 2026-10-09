@@ -58,11 +58,11 @@ const WAKEUP_CONFIG: Record<string, WakeupConfig> = {
       { title: "Concurrency", description: "Worker pre-loading before serving traffic." },
     ],
   },
-  tinyllm: {
+tinyllm: {
     appName: "TinyLLM",
     title: "Render Server Wake-Up",
     description: "Qwen1.5-0.5B Local LLM · FastAPI · Quantized GGUF (Render free tier)",
-    healthEndpoint: "https://tinny-llm-latest.onrender.com/health",
+    healthEndpoint: "/api/tinyllm/health",
     launchUrl: "/tinyllm",
     challenges: [
       { title: "Cold Start Latency", description: "Container spin-up blocks the first request (40–80s)." },
