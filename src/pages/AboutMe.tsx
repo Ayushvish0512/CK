@@ -1150,6 +1150,7 @@ function AtsView() {
 export default function AboutMe() {
   const isMobile = useIsMobile();
   const [view, setView] = useState<"interactive" | "ats">("interactive");
+  const [isDownloading, setIsDownloading] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 selection:bg-blue-500/30 relative overflow-x-hidden">
@@ -1217,7 +1218,9 @@ export default function AboutMe() {
             </Link>
 
             <button
+              disabled={isDownloading}
               onClick={async () => {
+                setIsDownloading(true);
                 try {
                   const res = await fetch('/api/download-resume');
                   const contentType = res.headers.get('content-type') || '';
@@ -1251,12 +1254,23 @@ export default function AboutMe() {
                   }
                 } catch {
                   toast.error('Download failed');
+                } finally {
+                  setIsDownloading(false);
                 }
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Download / Print</span>
+              {isDownloading ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span className="hidden md:inline">Preparing...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Download / Print</span>
+                </>
+              )}
             </button>
           </div>
         </div>
