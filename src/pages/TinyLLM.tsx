@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Send, Sparkles, RefreshCw, Command, Cpu, Terminal, Zap, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const TINYLLM_BACKEND = "/api/tinyllm";
+const TINYLLM_BACKEND = "https://tinny-llm-latest.onrender.com/";
 
 function getUserId() {
   let userId = localStorage.getItem("tinyllm_user_id");
