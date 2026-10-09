@@ -17,6 +17,11 @@ export default defineConfig(() => ({
          target: 'https://speakbetter-lgfr.onrender.com',
          changeOrigin: true,
          rewrite: (path) => path.replace(/^\/api\/speakbetter/, '')
+      },
+      '/api/tinyllm': {
+         target: 'https://tinny-llm-latest.onrender.com',
+         changeOrigin: true,
+         rewrite: (path) => path.replace(/^\/api\/tinyllm/, '')
       }
     }
   },
