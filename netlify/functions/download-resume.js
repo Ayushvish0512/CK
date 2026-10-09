@@ -1,5 +1,6 @@
 export default async (request, context) => {
-  const driveUrl = process.env.RESUME_LINK;
+  // Support both uppercase and lowercase env var names
+  const driveUrl = process.env.RESUME_LINK || process.env.resume_link;
   
   if (!driveUrl) {
     return new Response(JSON.stringify({ error: 'NO_DRIVE_URL', message: 'Resume link not configured' }), {
