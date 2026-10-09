@@ -19,6 +19,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/tinyllm/*"
+  to = "https://tinny-llm-latest.onrender.com/:splat"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
