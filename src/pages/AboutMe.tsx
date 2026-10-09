@@ -595,41 +595,6 @@ function InteractiveView({ isMobile }: { isMobile: boolean }) {
               <Github className="w-3.5 h-3.5 text-purple-400 shrink-0" />
               GitHub
             </a>
-            <button
-              onClick={async () => {
-                try {
-                  const res = await fetch('/api/download-resume');
-                  if (res.ok) {
-                    const blob = await res.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'Ayush-Vishwakarma-Resume.pdf';
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    const source = res.headers.get('X-Resume-Source');
-                    toast.success(source === 'google-drive' ? 'Downloaded from Google Drive' : 'Downloaded (local fallback)');
-                  } else {
-                    const err = await res.json();
-                    if (err.fallbackUrl) {
-                      const a = document.createElement('a');
-                      a.href = err.fallbackUrl;
-                      a.download = 'Ayush-Vishwakarma-Resume.pdf';
-                      a.click();
-                      toast.warning('Google Drive unavailable, using local version');
-                    } else {
-                      toast.error(err.message || 'Download failed');
-                    }
-                  }
-                } catch {
-                  toast.error('Download failed');
-                }
-              }}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:border-emerald-500 hover:text-white transition-all"
-            >
-              <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              Download Resume
-            </button>
           </div>
         </div>
       </motion.section>
@@ -1185,6 +1150,7 @@ function AtsView() {
 export default function AboutMe() {
   const isMobile = useIsMobile();
   const [view, setView] = useState<"interactive" | "ats">("interactive");
+  const [isDownloading, setIsDownloading] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 selection:bg-blue-500/30 relative overflow-x-hidden">
@@ -1252,14 +1218,59 @@ export default function AboutMe() {
             </Link>
 
             <button
-              onClick={() => {
-                setView("ats");
-                setTimeout(() => window.print(), 100);
+              disabled={isDownloading}
+              onClick={async () => {
+                setIsDownloading(true);
+                try {
+                  const res = await fetch('/api/download-resume');
+                  const contentType = res.headers.get('content-type') || '';
+                  const isPdf = contentType.includes('application/pdf') || contentType.includes('application/octet-stream');
+                  
+                  if (res.ok && isPdf) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Ayush-Vishwakarma-Resume.pdf';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    const source = res.headers.get('X-Resume-Source');
+                    toast.success(source === 'google-drive' ? 'Downloaded from Google Drive' : 'Downloaded (local fallback)');
+                  } else {
+                    // Handle errors or non-PDF responses (like SPA fallback HTML)
+                    let err;
+                    try {
+                      err = await res.json();
+                    } catch {
+                      err = { fallbackUrl: true }; // Assume fallback if not JSON
+                    }
+                    if (err.fallbackUrl || !isPdf) {
+                      toast.warning('Drive link failed, giving ATS print command');
+                      setView('ats');
+                      setTimeout(() => window.print(), 100);
+                    } else {
+                      toast.error(err.message || 'Download failed');
+                    }
+                  }
+                } catch {
+                  toast.error('Download failed');
+                } finally {
+                  setIsDownloading(false);
+                }
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Printer className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Print / Save PDF</span>
+              {isDownloading ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span className="hidden md:inline">Preparing...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Download / Print</span>
+                </>
+              )}
             </button>
           </div>
         </div>
