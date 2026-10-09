@@ -13,6 +13,7 @@ import {
   Code,
   Copy,
   Database,
+  Download,
   Github,
   GraduationCap,
   Linkedin,
@@ -173,28 +174,6 @@ const experience = [
       "Fraud Detection",
       "MS Excel",
     ],
-  },
-  {
-    role: "Data Analyst & Automation Specialist",
-    company: "Consulting & Applied Analytical Solutions",
-    period: "Prior Technical Engagements",
-    location: "",
-    accent: "text-emerald-400",
-    bullets: [
-      {
-        title: "Agentic AI & Intelligent Workflows:",
-        body: "Implemented autonomous Agentic AI and Generative AI pipelines connecting LLM models, custom webhooks, and REST APIs to auto-triage inbound inquiries, score lead quality, and draft analytical digests for operations.",
-      },
-      {
-        title: "Predictive Modeling & Machine Learning:",
-        body: "Built supervised predictive models in Python (Scikit-Learn, Pandas) for classification and regression tasks including churn likelihood, forecast modeling, and exploratory data analysis (EDA).",
-      },
-      {
-        title: "API Ecosystem Integrations:",
-        body: "Developed webhook receivers and custom API connectors using FastAPI to seamlessly pipe conversion events between payment gateways (Razorpay), CRM systems (Zoho/LeadSquared), and Google Sheets data hubs.",
-      },
-    ],
-    tags: ["Agentic AI", "Machine Learning", "FastAPI", "REST APIs", "Tableau"],
   },
   {
     role: "Business Analyst Intern",
@@ -616,6 +595,41 @@ function InteractiveView({ isMobile }: { isMobile: boolean }) {
               <Github className="w-3.5 h-3.5 text-purple-400 shrink-0" />
               GitHub
             </a>
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/download-resume');
+                  if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Ayush-Vishwakarma-Resume.pdf';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    const source = res.headers.get('X-Resume-Source');
+                    toast.success(source === 'google-drive' ? 'Downloaded from Google Drive' : 'Downloaded (local fallback)');
+                  } else {
+                    const err = await res.json();
+                    if (err.fallbackUrl) {
+                      const a = document.createElement('a');
+                      a.href = err.fallbackUrl;
+                      a.download = 'Ayush-Vishwakarma-Resume.pdf';
+                      a.click();
+                      toast.warning('Google Drive unavailable, using local version');
+                    } else {
+                      toast.error(err.message || 'Download failed');
+                    }
+                  }
+                } catch {
+                  toast.error('Download failed');
+                }
+              }}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:border-emerald-500 hover:text-white transition-all"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              Download Resume
+            </button>
           </div>
         </div>
       </motion.section>
@@ -1138,6 +1152,36 @@ function AtsView() {
   );
 }
 
+{/* 
+  REMOVED FROM PROFESSIONAL EXPERIENCE - Not in source PDF resume
+  This entry was a skills summary disguised as a role with no dates ("Prior Technical Engagements")
+  Content overlaps with Projects, Skills, and other roles (Laiqa, BigBox)
+  Kept here for reference only
+
+  {
+    role: "Data Analyst & Automation Specialist",
+    company: "Consulting & Applied Analytical Solutions",
+    period: "Prior Technical Engagements",
+    location: "",
+    accent: "text-emerald-400",
+    bullets: [
+      {
+        title: "Agentic AI & Intelligent Workflows:",
+        body: "Implemented autonomous Agentic AI and Generative AI pipelines connecting LLM models, custom webhooks, and REST APIs to auto-triage inbound inquiries, score lead quality, and draft analytical digests for operations.",
+      },
+      {
+        title: "Predictive Modeling & Machine Learning:",
+        body: "Built supervised predictive models in Python (Scikit-Learn, Pandas) for classification and regression tasks including churn likelihood, forecast modeling, and exploratory data analysis (EDA).",
+      },
+      {
+        title: "API Ecosystem Integrations:",
+        body: "Developed webhook receivers and custom API connectors using FastAPI to seamlessly pipe conversion events between payment gateways (Razorpay), CRM systems (Zoho/LeadSquared), and Google Sheets data hubs.",
+      },
+    ],
+    tags: ["Agentic AI", "Machine Learning", "FastAPI", "REST APIs", "Tableau"],
+  },
+*/}
+
 export default function AboutMe() {
   const isMobile = useIsMobile();
   const [view, setView] = useState<"interactive" | "ats">("interactive");
@@ -1208,7 +1252,10 @@ export default function AboutMe() {
             </Link>
 
             <button
-              onClick={() => window.print()}
+              onClick={() => {
+                setView("ats");
+                setTimeout(() => window.print(), 100);
+              }}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all"
             >
               <Printer className="w-3.5 h-3.5" />
