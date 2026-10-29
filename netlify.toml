@@ -12,16 +12,26 @@
   from = "/api/weather/*"
   to = "https://weather-project-k72v.onrender.com/:splat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/api/speakbetter/*"
   to = "https://speakbetter-lgfr.onrender.com/:splat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/api/tinyllm/*"
   to = "https://tinny-llm-latest.onrender.com/:splat"
   status = 200
+  force = true
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
 [[redirects]]
   from = "/*"

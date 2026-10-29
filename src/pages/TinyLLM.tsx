@@ -192,7 +192,7 @@ const TinyLLM: React.FC = () => {
                     {healthStatus === "checking" ? "Initializing Neural Net..." : "Waking TinyLLM Backend..."}
                   </h2>
                   <p className="text-xs text-slate-400 font-mono bg-slate-900/50 px-3 py-1 rounded-full inline-block">
-                    tinny-llm-latest.onrender.com
+                    Backend hidden (proxied)
                   </p>
                 </div>
 
